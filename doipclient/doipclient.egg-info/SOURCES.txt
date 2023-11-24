@@ -1,0 +1,15 @@
+LICENSE
+README.rst
+pyproject.toml
+setup.py
+doipclient/__init__.py
+doipclient/client.py
+doipclient/connectors.py
+doipclient/constants.py
+doipclient/messages.py
+doipclient.egg-info/PKG-INFO
+doipclient.egg-info/SOURCES.txt
+doipclient.egg-info/dependency_links.txt
+doipclient.egg-info/top_level.txt
+tests/__init__.py
+tests/test_client.py

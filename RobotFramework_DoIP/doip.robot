@@ -15,6 +15,10 @@ Test Request Vehicle Identification
     ${resp}=   Request Vehicle Identification 
     Log     ${resp}
 
+Test Request Diagnostic Power Mode
+    ${resp}=   Request Diagnostic Power Mode
+    Log     ${resp}
+
 Test Request Vehicle Identification with EID
     Request Vehicle Identification    eid="0x123456789abc"
   

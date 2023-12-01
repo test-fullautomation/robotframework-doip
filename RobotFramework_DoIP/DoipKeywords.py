@@ -74,11 +74,19 @@ class DoipKeywords(object):
         return resp
     
     @keyword("Request Routing Activation")
-    def request_alive_check(self, eid=None, vin=None):
+    def request_activation(self, activation_type, vm_specific, disable_retry):
         client = DoIPClient(self.ip, self.logical_address)
-        client.request_alive_check
+        resp = client.request_activation(self, activation_type, vm_specific, disable_retry)
+        return resp
 
     @keyword("Diagnostic Message")
     def send_diagnostic(self, diagnostic_payload, timeout):
         client = DoIPClient(self.ip, self.logical_address)
-        client.send_diagnostic(self, diagnostic_payload, timeout)
+        resp = client.send_diagnostic(self, diagnostic_payload, timeout)
+        return resp
+
+    @keyword("Request Diagnostic Power Mode")
+    def request_diagnostic_power_mode(self):
+        client = DoIPClient(self.ip, self.logical_address)
+        resp = client.request_diagnostic_power_mode()
+        return resp

@@ -114,11 +114,8 @@ class PositiveECU(AbstractECU):
 
 class NegativeECU(AbstractECU):
     def process_data(self, data):
-        if self.is_alive_check_request(data):
-            return bytearray([int(x, 16) for x in "02 fd 00 12 00 00 00 00 00 00".split(" ")])
-        elif self.is_activation_default_request(data):
+        if self.is_activation_default_request(data):
             return bytearray([int(x, 16) for x in "02 fd 00 06 00 00 00 09 0e 00 00 37 00 00 00 00 00".split(" ")])
-
 
 class ECUFactory:
     def create_ecu(self, ecu_type, ip_address, tcp_port, udp_port):

@@ -18,7 +18,8 @@
 # Initially created by Tri Mai (RBVH/ECM51) / December 2023.
 #
 # Description:
-#
+# Defines an abstract representation of an ECU for vehicle 
+# communication using the DoIP
 #
 # History:
 #

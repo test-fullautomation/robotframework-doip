@@ -45,14 +45,8 @@
 # ------------------------------------------
 
    "RELEASES"  : {
-                   "0.9." : [
-                              "RobotFramework_DoIP change 0.9 A",
-                              "RobotFramework_DoIP change 0.9 B",
-                              "RobotFramework_DoIP change 0.9 X"
-                            ],
                    "0.10." : [
-                               "RobotFramework_DoIP change 0.10 A",
-                               "RobotFramework_DoIP change 0.10 B",
+                               "Initialize RobotFramework DoIP Keywords",
                                "RobotFramework_DoIP change 0.10 X"
                              ]
                  }

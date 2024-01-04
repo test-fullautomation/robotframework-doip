@@ -1,9 +1,9 @@
 {
    "REPOSITORYNAME" : "robotframework-doip",
    "PACKAGENAME" : "RobotFramework_DoIP",
-   "AUTHOR" : "TODO",
-   "AUTHOREMAIL" : "TODO",
-   "DESCRIPTION" : "TODO",
+   "AUTHOR" : "Hua Van Thong",
+   "AUTHOREMAIL" : "thong.huavan@vn.bosch.com",
+   "DESCRIPTION" : "RobotFramework for DoIP Client",
    "LONGDESCRIPTIONCONTENTTYPE" : "text/markdown",
    "URL" : "https://github.com/test-fullautomation/robotframework-doip",
    "PROGRAMMINGLANGUAGE" : "Programming Language :: Python :: 3",

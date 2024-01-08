@@ -4,7 +4,27 @@
 
 ## How to install
 
-**!!! TODO !!!**
+The ** ** can bi installed in two different ways.
+
+1. Installation via PyPii (recommended for users)
+
+   ```
+   pip install
+   ```
+
+2. Installation via GitHub (recommended for developers)
+
+   -  Clone the ** ** repository to your machine
+
+      ```
+      git clone https://github.com/test-fullautomation/robotframework-doip.git
+      ```
+
+   -  Install dependencies
+
+      ```
+      pip install -r ./requirements.txt
+      ```
 
 ## Package Documentation
 

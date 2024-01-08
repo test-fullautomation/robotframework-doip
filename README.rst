@@ -18,12 +18,42 @@ Package Description
 **!!! TODO !!!**
 
 How to install
+1. Installation via PyPi (recommended for users)
+
+   .. code::
+
+
+2. Installation via GitHub (recommended for developer)
+   -  Clone ** ** repository to your machine.
+
+      .. code::
+         git clone https://github.com/test-fullautomation/robotframework-doip.git
+
+   -  Install dependencies
+      ** ** requires some additional Python libraries.
+      Before you install the cloned repository sources you have to
+      install the dependencies manually. The names of all related
+      packages you can find in the file `requirements.txt` in the
+      repository root folder. Use pip to install them:
+
+      .. code::
+         pip install doipclient
+
+      Additionally install **LaTeX** (recommended: TeX Live). This is
+      used to render the documentation.
+
+   -  Use the following command to install ** **:
+
+      .. code::
+         setup.py install
+
 --------------
 
 **!!! TODO !!!**
 
 Package Documentation
 ---------------------
+
 
 A detailed documentation of the **RobotFramework_DoIP** can be found here:
 `RobotFramework_DoIP.pdf <https://github.com/test-fullautomation/robotframework-doip/blob/develop/RobotFramework_DoIP/RobotFramework_DoIP.pdf>`_

@@ -53,10 +53,11 @@
    "TOC" : {
             "introduction"   : "./additional_docs/Introduction.tex",
             "description"    : "./additional_docs/Description.tex",
+            "ecusimulator"   : "./additional_docs/The ECU Simulator.tex",
             "INTERFACE"      : "../###PACKAGENAME###",
             "appendix"       : "./additional_docs/Appendix.rst",
             "history"        : "./additional_docs/History.tex",
-            "DOCUMENTPARTS"  : ["introduction","description","INTERFACE","appendix","history"]
+            "DOCUMENTPARTS"  : ["introduction","description", "ecusimulator","INTERFACE","appendix","history"]
            },
 
 # Section "PARAMS":

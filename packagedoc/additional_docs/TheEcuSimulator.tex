@@ -1,0 +1,187 @@
+% Copyright 2020-2023 Robert Bosch GmbH
+
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+
+% http://www.apache.org/licenses/LICENSE-2.0
+
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+
+% --------------------------------------------------------------------------------------------------------------
+
+\section{The ECU Simulator}
+
+This chapter provides a detailed explanation of the utilization of the ECU simulator through DoIP base on doipclient library. It serves for development or testing scenarios where a physical device is not available.
+\\The ECU simulator is designed to receive messages and respond accordingly to the following types of messages:
+
+\begin{itemize}
+   \item Alive Check Request
+   \item Diagnostic Power Mode Request
+   \item Doip Entity Status Request
+   \item Routing Activation Request
+   \item Vehicle Identification Request
+\end{itemize}
+
+\section{Initialize}
+
+This function sets up an instance of an ECU, initializes its attributes with default values, and includes placeholders for various properties that can be customized based on specific requirements.
+
+\begin{pythoncode}
+   def __init__(self, ecu_type, ip_address, tcp_port, udp_port):
+      # Initialize ECU attributes with default values
+      self.ecu_type = ecu_type
+      self.ip_address = ip_address
+      self.tcp_port = tcp_port
+      self.udp_port = udp_port
+      self.tcp_socket = None
+      self.udp_socket = None
+      # Set default values for various ECU properties
+      # These values might be placeholders and can be updated based on your actual requirements
+      self._ecu_logical_address = 3584
+      self._client_logical_address = 3584
+      self._logical_address = 55
+      self._response_code = doip_message.RoutingActivationResponse.ResponseCode.Success
+      self._diagnostic_power_mode = doip_message.DiagnosticPowerModeResponse.DiagnosticPowerMode.Ready
+      self._node_type = 1
+      self._max_concurrent_sockets = 16
+      self._currently_open_sockets = 1
+      self._max_data_size = None
+      self._vin = '19676527011956855057'
+      self._eid = b'11111'
+      self._gid = b'222222'
+      self._further_action_required = doip_message.VehicleIdentificationResponse.FurtherActionCodes.NoFurtherActionRequired
+      self._vin_sync_status = doip_message.VehicleIdentificationResponse.SynchronizationStatusCodes.Synchronized
+\end{pythoncode}
+
+\newpage
+
+\section{Start}
+
+This method is responsible for initializing and setting up TCP and UDP sockets, binding them to specific IP addresses and ports, and then starting separate threads to handle the communication on these sockets concurrently.
+
+\begin{pythoncode}
+   def start(self):
+      # Create TCP socket
+      self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      self.tcp_socket.bind((self.ip_address, self.tcp_port))
+      self.tcp_socket.listen(5)
+
+      # Create UDP socket
+      self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      self.udp_socket.bind((self.ip_address, self.udp_port))
+
+      # Start listening on separate threads
+      tcp_thread = threading.Thread(target=self.listen_tcp)
+      udp_thread = threading.Thread(target=self.listen_udp)
+
+      tcp_thread.start()
+      udp_thread.start()
+\end{pythoncode}
+
+\textbf{Explanation:}
+\begin{enumerate}
+   \item TCP Socket Setup
+      \begin{itemize}
+         \item A TCP socket is created using the socket module with the \plog{socket.AF_INET} family (IPv4) and \plog{socket.SOCK_STREAM} type (TCP).
+         \item The TCP socket is bound to the specified IP address \plog{self.ip_address} and TCP port \plog{self.tcp_port}.
+         \item The TCP socket is set to listen for incoming connections with a backlog of 5 connections.
+      \end{itemize}
+   \item UDP Socket Setup
+      \begin{itemize}
+         \item A UDP socket is created using the same socket module with the \plog{socket.AF_INET} family (IPv4) and \plog{socket.SOCK_DGRAM type} (UDP).
+         \item The UDP socket is bound to the specified IP address \plog{self.ip_address} and UDP port \plog{self.udp_port}.
+      \end{itemize}
+   \item Thread Creation
+   \begin{itemize}
+      \item Two separate threads \plog{tcp_thread and udp_thread} are created using the threading module.
+      \item The target parameter of each thread is set to point to specific methods \plog{self.listen_tcp} and \plog{self.listen_udp}, suggesting that these methods likely contain the logic for handling TCP and UDP communication.
+   \end{itemize}
+   \item Thread Start
+   \begin{itemize}
+      \item Both threads are started concurrently using the start method, allowing the ECU to handle TCP and UDP communication simultaneously.
+   \end{itemize}
+\end{enumerate}
+
+\newpage
+
+\section{Example}
+
+We have provided an example demonstrating the usage of the ECU simulator in the file located at \plog{test_ecu_simulator.py}
+\\
+
+\begin{pythoncode}
+   if __name__ == "__main__":
+      # Create and start instances of different ECUs using the factory pattern and abstract class
+      factory = ECUFactory()
+
+      positive_ecu = factory.create_ecu(ECUType.POSITIVE_ECU, POSITIVE_ECU_IP, POSITIVE_TCP_PORT, POSITIVE_UDP_PORT)
+      negative_ecu = factory.create_ecu(ECUType.NEGATIVE_ECU, NEGATIVE_ECU_IP, NEGATIVE_TCP_PORT, NEGATIVE_UDP_PORT)
+      # Start positive and negative ECUs
+      positive_ecu.start()
+      negative_ecu.start()
+\end{pythoncode}
+
+In the given example, an instance of the ECU is created in \plog{ecu_simulator.py} by specifying the ECU's IP address, TCP port, and UDP port.
+Subsequently, the start method is invoked to initiate its operation.
+
+\textbf{Output:}
+\begin{pythoncode}
+TCP Server 172.17.0.5 listening on port 13400
+UDP Server 172.17.0.5 listening on port 13400
+TCP Server 172.17.0.5 listening on port 12346
+UDP Server 172.17.0.5 listening on port 12347
+\end{pythoncode}
+
+Now you can execute the test by running the file located at \plog{test_ecu_simulator.py}
+\\
+
+\begin{pythoncode}
+   def test_positive_ecu_simulator():
+      try:
+         ip = '172.17.0.5'
+         ecu_logical_address = 57344
+
+         # Create a DoIPClient instance for positive ECU simulator
+         doip = DoIPClient(ip, ecu_logical_address, activation_type=None)
+
+         # Test various interactions
+         print(doip.request_diagnostic_power_mode())
+         print(doip.request_entity_status())
+         print(doip.request_alive_check())
+         print(doip.request_activation(1))
+         print(doip.get_entity())
+         print(doip.request_vehicle_identification(vin="1" * 17))
+         print(doip.request_vehicle_identification(eid=b"1" * 6))
+
+      except Exception as e:
+         print(f"Error during positive ECU simulation: {e}")
+\end{pythoncode}
+
+\newpage
+
+\textbf{Output:}
+\begin{pythoncode}
+   # Diagnostic power mode response
+   DiagnosticPowerModeResponse (0x4004): { diagnostic_power_mode : DiagnosticPowerMode.Ready }
+   
+   # Entity status response
+   EntityStatusResponse (0x4002): { node_type : 1, max_concurrent_sockets : 16, currently_open_sockets : 1, max_data_size : None }
+   
+   # Alive check response
+   AliveCheckResponse (0x8): { source_address : 3584 }
+   
+   # Routing activation response
+   RoutingActivationResponse (0x6): { client_logical_address : 3584, logical_address : 55, response_code : ResponseCode.Success, reserved : 0, vm_specific : None }  
+   
+   # Get entity response
+   (('172.17.0.5', 13400), VehicleIdentificationResponse(b'19676527011956855', 3584, b'11111\x00', b'222222', 0, 0))
+   
+   # Vehicle identification response
+   VehicleIdentificationResponse (0x4): { vin: "19676527011956855", logical_address : 3584, eid : b'11111\x00', gid : b'222222', further_action_required : FurtherActionCodes.NoFurtherActionRequired, vin_sync_status : SynchronizationStatusCodes.Synchronized }
+   VehicleIdentificationResponse (0x4): { vin: "19676527011956855", logical_address : 3584, eid : b'11111\x00', gid : b'222222', further_action_required : FurtherActionCodes.NoFurtherActionRequired, vin_sync_status : SynchronizationStatusCodes.Synchronized }
+\end{pythoncode}

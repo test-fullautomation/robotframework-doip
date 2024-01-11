@@ -276,13 +276,15 @@ class DoipKeywords(object):
             * Await Vehicle Annoucement 
             * Await Vehicle Annoucement | timeout=10
         """
-        address, announcement = DoIPClient.await_vehicle_announcement(udp_port, timeout, ipv6, source_interface, sock)
-        logical_address = announcement.logical_address
-        ip, port = address
-
-        logger.debug(f"Target ECU IP: {ip}, Logical ECU Address: {logical_address}")
+        try:
+            address, announcement = DoIPClient.await_vehicle_announcement(udp_port, timeout, ipv6, source_interface, sock)
+            logical_address = announcement.logical_address
+            ip, port = address
+            logger.info(f"Target ECU IP: {ip}, Logical ECU Address: {logical_address}")
+            return ip, port, logical_address
+        except Exception as e:
+            logger.error(f"An error occurred while sending a VehicleIdentificationRequest: {e}")
         
-        return ip, port, logical_address
 
     @keyword("Get Entity")
     def get_entity(
@@ -332,11 +334,9 @@ class DoipKeywords(object):
             address, announcement = DoIPClient.get_entity(ecu_ip_address, protocol_version, eid, vin)
             logical_address = announcement.logical_address
             ip, port = address
-            logger.debug(f"ECU IP Address: {ip}")
-            logger.debug(f"ECU Logical Address:", {logical_address})
-            logger.debug(f"Port: {port}")
+            logger.info(f"Target ECU IP: {ip}, Logical ECU Address: {logical_address}, port: {port}")
         except Exception as e:
-            logger.error(f"An error occurred while sending a VehicleIdentificationRequest: {e}")
+            logger.error(f"An error occurred while get entity: {e}")
 
     @keyword("Request Entity Status")
     def request_entity_status(self):
@@ -363,7 +363,7 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.request_entity_status()
-            logger.debug(f"Entity response payload_type: {resp.payload_type}")
+            logger.info(f"Entity response payload_type: {resp.payload_type}")
         else:
             logger.warning(f"No active DoIP connection. Unable to request entity status.")
     
@@ -408,11 +408,11 @@ class DoipKeywords(object):
             else:
                 resp = self.client.request_vehicle_identification()
 
-            logger.debug(f"eid: {resp.eid}")
-            logger.debug(f"vin: {resp.vin}")
-            logger.debug(f"gid: {resp.gid}")
-            logger.debug(f"logical_address: {resp.logical_address}")
-            logger.debug(f"vin_sync_status: {resp.vin_sync_status}")
+            logger.info(f"eid: {resp.eid}")
+            logger.info(f"vin: {resp.vin}")
+            logger.info(f"gid: {resp.gid}")
+            logger.info(f"logical_address: {resp.logical_address}")
+            logger.info(f"vin_sync_status: {resp.vin_sync_status}")
         else:
             logger.warning(f"No active DoIP connection. Unable to request vehicle identification.")
 
@@ -444,7 +444,7 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.request_alive_check()
-            logger.debug(f"source_address: {resp.source_address}")
+            logger.info(f"source_address: {resp.source_address}")
         else:
             logger.warning(f"No active DoIP connection. Unable to request alive.")
 
@@ -488,8 +488,8 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.request_activation(self, activation_type, vm_specific, disable_retry)
-            logger.debug(f"client_logical_address: {resp.client_logical_address}")
-            logger.debug(f"logical_address: {resp.logical_address}")
+            logger.info(f"client_logical_address: {resp.client_logical_address}")
+            logger.info(f"logical_address: {resp.logical_address}")
         else:
             logger.warning(f"No active DoIP connection. Unable to request routing activation.")
 
@@ -518,6 +518,6 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.request_diagnostic_power_mode()
-            logger.debug(f"diagnostic_power_mode: {resp.diagnostic_power_mode}")
+            logger.info(f"diagnostic_power_mode: {resp.diagnostic_power_mode}")
         else:
             logger.warning(f"No active DoIP connection. Unable to request diagnostic power mode.")

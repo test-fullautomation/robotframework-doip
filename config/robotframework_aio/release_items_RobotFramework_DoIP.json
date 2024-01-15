@@ -45,9 +45,9 @@
 # ------------------------------------------
 
    "RELEASES"  : {
-                   "0.10." : [
-                               "Initialize RobotFramework DoIP Keywords",
-                               "RobotFramework_DoIP change 0.10 X"
+                   "0.x.y" : [
+                               "0.x.y",
+                               "0.x.y"
                              ]
                  }
 }

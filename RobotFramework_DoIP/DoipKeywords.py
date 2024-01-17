@@ -11,6 +11,7 @@ from constants import (
 )
 
 from doipclient import DoIPClient
+import binascii
 
 class DoipKeywords(object):
 
@@ -127,7 +128,9 @@ class DoipKeywords(object):
             * Send Diagnostic Message | 1040 | timeout=10 |
         """
         if self.client is not None:
-            self.client.send_diagnostic(diagnostic_payload, timeout)
+            # Convert string to byte array
+            msg = bytes.fromhex(diagnostic_payload)
+            self.client.send_diagnostic(msg, timeout)
             logger.info(f"Send diagnostic message: {diagnostic_payload}")
         else:
             logger.warning(f"No active DoIP connection. Unable to send diagnostic message.")
@@ -162,10 +165,14 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.receive_diagnostic(timeout)
-            logger.info(f"Receive diagnostic message: {resp}")
+            # Convert the received byte data to a hexadecimal string
+            hex_string_data = binascii.hexlify(resp).decode('utf-8')
+
+            logger.info(f"Receive diagnostic message: {hex_string_data}")
         else:
             logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
 
+        return hex_string_data
     
     @keyword("Reconnect To Ecu")
     def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME):

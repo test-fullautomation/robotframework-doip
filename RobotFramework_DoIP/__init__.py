@@ -15,6 +15,10 @@ from RobotFramework_DoIP.DoipKeywords import DoipKeywords
 from RobotFramework_DoIP.version import VERSION
 
 
-class RobotFrameworkDoIP(DoipKeywords):
+class RobotFramework_DoIP(DoipKeywords):
+    """ 
+    RobotFrameworkDoIP is a Robot Framework library aimed to provide DoIP protocol for diagnostic message.
+
+    """
     __version__ = VERSION
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'

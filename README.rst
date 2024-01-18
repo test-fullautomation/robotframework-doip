@@ -13,49 +13,71 @@
    limitations under the License.
 
 Package Description
-===================
+---------------------
 
-**!!! TODO !!!**
+RobotFramework DoIP is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using the Diagnostics over Internet Protocol (DoIP).
+
+At its core, DoIP serves as a communication bridge between external diagnostic tools and a vehicle's ECUs. This library, RobotFrameworkDoIP, 
+provides a set of keywords that enable users to perform diagnostic operations and engage with ECUs, facilitating automated testing processes and interaction with vehicles through the DoIP protocol.
 
 How to install
-1. Installation via PyPi (recommended for users)
+---------------------
+1.  Installation via GitHub (recommended for developers)
 
-   .. code::
+    -   Clone the **RobotFramework-DoIP** in `GitHub <https://github.com/test-fullautomation/robotframework-doip>`_ repository to your machine.
+
+        .. code:: 
+
+            git clone https://github.com/test-fullautomation/robotframework-doip.git
+
+    -   Install dependencies
+
+        **RobotFramework-DoIP** requires some additional Python libraries.
+        Before you install the cloned repository sources you have to
+        install the dependencies manually. The names of all related
+        packages you can find in the file ``requirements.txt`` in the
+        repository root folder. Use pip to install them:
+
+        .. code:: 
+
+            pip install -r ./requirements.txt
+        
+
+        Additionally install **LaTeX** (recommended: TeX Live). This is
+        used to render the documentation.
+
+    -   Configure dependencies
+
+        The installation of **RobotFramework-DoIP** includes to generate
+        the documentation in PDF format. This is done by an application
+        called **GenPackageDoc**, that is part of the installation
+        dependencies (see ``requirements.txt``).
+
+        **GenPackageDoc** uses **LaTeX** to generate the documentation
+        in PDF format. Therefore **GenPackageDoc** needs to know where
+        to find **LaTeX**. This is defined in the **GenPackageDoc**
+        configuration file
+
+        .. code:: 
+
+            packagedoc\packagedoc_config.json
 
 
-2. Installation via GitHub (recommended for developer)
-   -  Clone ** ** repository to your machine.
+        Before you start the installation you have to introduce the following environment variable, that is used in ``packagedoc_config.json``:
 
-      .. code::
-         git clone https://github.com/test-fullautomation/robotframework-doip.git
+        - ``GENDOC_LATEXPATH`` : path to ``pdflatex`` executable
 
-   -  Install dependencies
-      ** ** requires some additional Python libraries.
-      Before you install the cloned repository sources you have to
-      install the dependencies manually. The names of all related
-      packages you can find in the file `requirements.txt` in the
-      repository root folder. Use pip to install them:
+    -   Use the following command to install **RobotFramework-DoIP**:
 
-      .. code::
-         pip install doipclient
+        .. code:: 
 
-      Additionally install **LaTeX** (recommended: TeX Live). This is
-      used to render the documentation.
-
-   -  Use the following command to install ** **:
-
-      .. code::
-         setup.py install
-
---------------
-
-**!!! TODO !!!**
+            setup.py install
 
 Package Documentation
 ---------------------
 
-
-A detailed documentation of the **RobotFramework_DoIP** can be found here:
+A detailed documentation of the **RobotFramework_DoIP** can be found
+here:
 `RobotFramework_DoIP.pdf <https://github.com/test-fullautomation/robotframework-doip/blob/develop/RobotFramework_DoIP/RobotFramework_DoIP.pdf>`_
 
 Feedback
@@ -68,14 +90,18 @@ About
 -----
 
 Maintainers
-~~~~~~~~~~~
+------------
 
 `Thomas Pollerspöck <mailto:Thomas.Pollerspoeck@de.bosch.com>`_
 
 Contributors
-~~~~~~~~~~~~
+------------
 
 `Thomas Pollerspöck <mailto:Thomas.Pollerspoeck@de.bosch.com>`_
+
+`Hua Van Thong <mailto:thong.huavan@vn.bosch.com>`_
+
+`Mai Minh Tri <mailto:tri.maiminh@vn.bosch.com>`_
 
 License
 -------

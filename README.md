@@ -1,30 +1,34 @@
 # Package Description
 
-RobotFramework DoIP is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using the Diagnostics over Internet Protocol (DoIP).
+RobotFramework DoIP is a Robot Framework library specifically designed
+for interacting with Electronic Control Units (ECUs) using the
+Diagnostics over Internet Protocol (DoIP).
 
-At its core, DoIP serves as a communication bridge between external diagnostic tools and a vehicle's ECUs. This library, RobotFrameworkDoIP, 
-provides a set of keywords that enable users to perform diagnostic operations and engage with ECUs, facilitating automated testing processes and interaction with vehicles through the DoIP protocol.
+At its core, DoIP serves as a communication bridge between external
+diagnostic tools and a vehicle\'s ECUs. This library,
+RobotFrameworkDoIP, provides a set of keywords that enable users to
+perform diagnostic operations and engage with ECUs, facilitating
+automated testing processes and interaction with vehicles through the
+DoIP protocol.
 
+# How to install
 
-## How to install
 1.  Installation via GitHub (recommended for developers)
-
-    -   Clone the **RobotFramework-DoIP** repository to your machine.
+    -   Clone the **RobotFramework-DoIP** in
+        [GitHub](https://github.com/test-fullautomation/robotframework-doip)
+        repository to your machine.
 
         ``` 
         git clone https://github.com/test-fullautomation/robotframework-doip.git
         ```
 
-        [RobotFramework-DoIP in
-        GitHub](https://github.com/test-fullautomation/robotframework-doip)
-
     -   Install dependencies
 
-        **RobotFramework-DoIP** requires some additional Python libraries.
-        Before you install the cloned repository sources you have to
-        install the dependencies manually. The names of all related
-        packages you can find in the file `requirements.txt` in the
-        repository root folder. Use pip to install them:
+        **RobotFramework-DoIP** requires some additional Python
+        libraries. Before you install the cloned repository sources you
+        have to install the dependencies manually. The names of all
+        related packages you can find in the file `requirements.txt` in
+        the repository root folder. Use pip to install them:
 
         ``` 
         pip install -r ./requirements.txt
@@ -61,32 +65,33 @@ provides a set of keywords that enable users to perform diagnostic operations an
         setup.py install
         ```
 
-## Package Documentation
+# Package Documentation
 
 A detailed documentation of the **RobotFramework_DoIP** can be found
 here:
 [RobotFramework_DoIP.pdf](https://github.com/test-fullautomation/robotframework-doip/blob/develop/RobotFramework_DoIP/RobotFramework_DoIP.pdf)
 
-## Feedback
+# Feedback
 
 To give us a feedback, you can send an email to [Thomas
 Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com) or
 [RBVH-ECM-Automation_Test_Framework-Associates](mailto:RBVH-ENG2-CMD-Associates@bcn.bosch.com)
 
-## About
+# About
 
-### Maintainers
+# Maintainers
 
 [Thomas Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com)
 
-### Contributors
+# Contributors
 
-[Thomas Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com)  
-[Hua Van Thong](mailto:thong.huavan@vn.bosch.com)  
-[Mai Minh Tri](mailto:tri.maiminh@vn.bosch.com)  
+[Thomas Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com)
 
+[Hua Van Thong](mailto:thong.huavan@vn.bosch.com)
 
-## License
+[Mai Minh Tri](mailto:tri.maiminh@vn.bosch.com)
+
+# License
 
 Copyright 2020-2023 Robert Bosch GmbH
 

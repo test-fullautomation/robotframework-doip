@@ -108,7 +108,7 @@ class DoipKeywords(object):
         **Parameters:**
 
             * param ``diagnostic_payload``: UDS payload to transmit to the ECU
-            * type ``diagnostic_payload``: bytearray
+            * type ``diagnostic_payload``: string
             * param ``timeout``: send diagnostic time out (default: A_PROCESSING_TIME)
             * type ``timeout``: int (s)
 

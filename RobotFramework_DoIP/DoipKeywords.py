@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from constants import (
+from .constants import (
     A_DOIP_CTRL,
     TCP_DATA_UNSECURED,
     UDP_DISCOVERY,
@@ -235,8 +235,6 @@ class DoipKeywords(object):
         else:
             logger.warning(f"No active DoIP connection. Unable to close connection.")
         
-
-
     @keyword("Await Vehicle Annoucement")
     def await_vehicle_announcement(
         self,

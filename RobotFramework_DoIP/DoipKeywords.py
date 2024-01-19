@@ -174,6 +174,45 @@ class DoipKeywords(object):
 
         return hex_string_data
     
+    @keyword("Receive Diagnostic Message")
+    def receive_diagnostic_message(self, timeout=None):
+        """
+        **Description:**
+
+            Receive a raw diagnostic payload (ie: UDS) from the ECU.
+
+        **Parameters:**
+
+            * param ``timeout``: time waiting diagnostic message (default: None)
+            * type ``timeout``: int (s)
+
+        **Return:**
+
+            * return: diagnostic message 
+            * rtype: string
+
+        **Exception:**
+
+            raises IOError: DoIP negative acknowledgement received
+
+        **Usage:**
+
+            # Explicitly specifies all diagnostic message properties
+
+            * Receive Diagnostic Message |
+            * Receive Diagnostic Message | timeout=10 |
+        """
+        if self.client is not None:
+            resp = self.client.receive_diagnostic(timeout)
+            # Convert the received byte data to a hexadecimal string
+            hex_string_data = binascii.hexlify(resp).decode('utf-8')
+
+            logger.info(f"Receive diagnostic message: {hex_string_data}")
+        else:
+            logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
+
+        return hex_string_data
+    
     @keyword("Reconnect To Ecu")
     def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME):
         """

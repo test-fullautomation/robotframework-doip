@@ -1,3 +1,6 @@
+*** Settings ***
+Library    RobotFramework_DoIP
+
 *** Test Cases ***
 
 Test Get Entity Gateway

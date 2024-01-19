@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from constants import (
+from .constants import (
     A_DOIP_CTRL,
     TCP_DATA_UNSECURED,
     UDP_DISCOVERY,
@@ -11,6 +11,7 @@ from constants import (
 )
 
 from doipclient import DoIPClient
+import binascii
 
 class DoipKeywords(object):
 
@@ -107,7 +108,7 @@ class DoipKeywords(object):
         **Parameters:**
 
             * param ``diagnostic_payload``: UDS payload to transmit to the ECU
-            * type ``diagnostic_payload``: bytearray
+            * type ``diagnostic_payload``: string
             * param ``timeout``: send diagnostic time out (default: A_PROCESSING_TIME)
             * type ``timeout``: int (s)
 
@@ -127,14 +128,16 @@ class DoipKeywords(object):
             * Send Diagnostic Message | 1040 | timeout=10 |
         """
         if self.client is not None:
-            self.client.send_diagnostic(diagnostic_payload, timeout)
+            # Convert string to byte array
+            msg = bytes.fromhex(diagnostic_payload)
+            self.client.send_diagnostic(msg, timeout)
             logger.info(f"Send diagnostic message: {diagnostic_payload}")
         else:
             logger.warning(f"No active DoIP connection. Unable to send diagnostic message.")
 
 
     @keyword("Receive Diagnostic Message")
-    def receive_diagnostic_message(self, timeout):
+    def receive_diagnostic_message(self, timeout=None):
         """
         **Description:**
 
@@ -162,10 +165,53 @@ class DoipKeywords(object):
         """
         if self.client is not None:
             resp = self.client.receive_diagnostic(timeout)
-            logger.info(f"Receive diagnostic message: {resp}")
+            # Convert the received byte data to a hexadecimal string
+            hex_string_data = binascii.hexlify(resp).decode('utf-8')
+
+            logger.info(f"Receive diagnostic message: {hex_string_data}")
         else:
             logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
 
+        return hex_string_data
+    
+    @keyword("Receive Diagnostic Message")
+    def receive_diagnostic_message(self, timeout=None):
+        """
+        **Description:**
+
+            Receive a raw diagnostic payload (ie: UDS) from the ECU.
+
+        **Parameters:**
+
+            * param ``timeout``: time waiting diagnostic message (default: None)
+            * type ``timeout``: int (s)
+
+        **Return:**
+
+            * return: diagnostic message 
+            * rtype: string
+
+        **Exception:**
+
+            raises IOError: DoIP negative acknowledgement received
+
+        **Usage:**
+
+            # Explicitly specifies all diagnostic message properties
+
+            * Receive Diagnostic Message |
+            * Receive Diagnostic Message | timeout=10 |
+        """
+        if self.client is not None:
+            resp = self.client.receive_diagnostic(timeout)
+            # Convert the received byte data to a hexadecimal string
+            hex_string_data = binascii.hexlify(resp).decode('utf-8')
+
+            logger.info(f"Receive diagnostic message: {hex_string_data}")
+        else:
+            logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
+
+        return hex_string_data
     
     @keyword("Reconnect To Ecu")
     def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME):
@@ -228,8 +274,6 @@ class DoipKeywords(object):
         else:
             logger.warning(f"No active DoIP connection. Unable to close connection.")
         
-
-
     @keyword("Await Vehicle Annoucement")
     def await_vehicle_announcement(
         self,

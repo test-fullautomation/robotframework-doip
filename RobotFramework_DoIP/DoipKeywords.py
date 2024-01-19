@@ -137,7 +137,7 @@ class DoipKeywords(object):
 
 
     @keyword("Receive Diagnostic Message")
-    def receive_diagnostic_message(self, timeout):
+    def receive_diagnostic_message(self, timeout=None):
         """
         **Description:**
 

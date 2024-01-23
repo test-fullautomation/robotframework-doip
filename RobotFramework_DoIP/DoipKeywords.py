@@ -36,7 +36,7 @@ class DoipKeywords(object):
         """
         **Description:**
 
-            Establishing a connection to an (ECU) within the context of automotive communication. 
+            Establishing a DoIP connection to an (ECU) within the context of automotive communication. 
        
         **Parameters:**
 
@@ -44,7 +44,7 @@ class DoipKeywords(object):
                     address like "192.168.1.1" or an IPv6 address like "2001:db8::".
             * type ``ecu_ip_address``: str
             * param ``ecu_logical_address`` (required): The logical address of the ECU.
-            * type ``ecu_logical_address``: int
+            * type ``ecu_logical_address``: any
             * param ``tcp_port`` (optional): The TCP port used for unsecured data communication (default is **TCP_DATA_UNSECURED**).
             * type ``tcp_port``: int
             * param ``udp_port`` (optional): The UDP port used for ECU discovery (default is **UDP_DISCOVERY**).
@@ -70,13 +70,17 @@ class DoipKeywords(object):
 
             None
         
+        **Exception:**
+
+            raises ConnectionError: Failed to establish a DoIP connection
+
         **Usage:**
             
             # Explicitly specifies all establishing a connection 
-
-            * Connect To ECU | 172.17.0.111 | ${1863} |
-            * Connect To ECU | 172.17.0.111 | ${1863} | client_ip_address=172.17.0.5 | client_logical_address=${1895} |
-            * Connect To ECU | 172.17.0.111 | ${1863} | client_ip_address=172.17.0.5 | client_logical_address=${1895} | activation_type=${0} |
+            
+            * Connect To ECU | 172.17.0.111 | 1863 |
+            * Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 |
+            * Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 | activation_type=0 |
         """
         try:
             self.client = DoIPClient(
@@ -95,8 +99,8 @@ class DoipKeywords(object):
             logger.info(f"Connection established successfully. Target ECU: {ecu_ip_address} | Client: {client_logical_address}")
                 
         except Exception as e:
-            logger.error(f"An error occurred while connecting: {e}")
-        
+            error_message = f"An error occurred while connecting: {e}"
+            raise ConnectionError(error_message)
     
     @keyword("Send Diagnostic Message")
     def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME):
@@ -118,6 +122,7 @@ class DoipKeywords(object):
 
         **Exception:**
 
+            raises ConnectionRefusedError: DoIP connection attempt failed
             raises IOError: DoIP negative acknowledgement received
 
         **Usage:**
@@ -127,13 +132,20 @@ class DoipKeywords(object):
             * Send Diagnostic Message | 1040 |
             * Send Diagnostic Message | 1040 | timeout=10 |
         """
-        if self.client is not None:
+        if self.client is None:
+            error_message = f"No active DoIP connection. Unable to send diagnostic message."
+            logger.error(error_message)
+            raise ConnectionRefusedError(error_message)
+            
+        try:
             # Convert string to byte array
             msg = bytes.fromhex(diagnostic_payload)
             self.client.send_diagnostic(msg, timeout)
             logger.info(f"Send diagnostic message: {diagnostic_payload}")
-        else:
-            logger.warning(f"No active DoIP connection. Unable to send diagnostic message.")
+        except Exception as e:
+            error_message = f"An error occurred while sending diagnostic message: {e}"
+            raise IOError(error_message)
+
 
 
     @keyword("Receive Diagnostic Message")
@@ -154,6 +166,7 @@ class DoipKeywords(object):
 
         **Exception:**
 
+            raises ConnectionRefusedError: DoIP connection attempt failed
             raises IOError: DoIP negative acknowledgement received
 
         **Usage:**
@@ -163,55 +176,20 @@ class DoipKeywords(object):
             * Receive Diagnostic Message |
             * Receive Diagnostic Message | timeout=10 |
         """
-        if self.client is not None:
+        if self.client is None:
+            error_message = f"No active DoIP connection. Unable to receive diagnostic message."
+            logger.error(error_message)
+            raise ConnectionRefusedError(error_message)
+        
+        try:
             resp = self.client.receive_diagnostic(timeout)
             # Convert the received byte data to a hexadecimal string
             hex_string_data = binascii.hexlify(resp).decode('utf-8')
-
             logger.info(f"Receive diagnostic message: {hex_string_data}")
-        else:
-            logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
-
-        return hex_string_data
-    
-    @keyword("Receive Diagnostic Message")
-    def receive_diagnostic_message(self, timeout=None):
-        """
-        **Description:**
-
-            Receive a raw diagnostic payload (ie: UDS) from the ECU.
-
-        **Parameters:**
-
-            * param ``timeout``: time waiting diagnostic message (default: None)
-            * type ``timeout``: int (s)
-
-        **Return:**
-
-            * return: diagnostic message 
-            * rtype: string
-
-        **Exception:**
-
-            raises IOError: DoIP negative acknowledgement received
-
-        **Usage:**
-
-            # Explicitly specifies all diagnostic message properties
-
-            * Receive Diagnostic Message |
-            * Receive Diagnostic Message | timeout=10 |
-        """
-        if self.client is not None:
-            resp = self.client.receive_diagnostic(timeout)
-            # Convert the received byte data to a hexadecimal string
-            hex_string_data = binascii.hexlify(resp).decode('utf-8')
-
-            logger.info(f"Receive diagnostic message: {hex_string_data}")
-        else:
-            logger.warning(f"No active DoIP connection. Unable to receive diagnostic message.")
-
-        return hex_string_data
+            return hex_string_data
+        except Exception as e:
+            error_message = f"An error occurred while receiving diagnostic message: {e}"
+            raise IOError(error_message)
     
     @keyword("Reconnect To Ecu")
     def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME):
@@ -229,20 +207,26 @@ class DoipKeywords(object):
             None
 
         **Exception:**
-
-            raises ConnectionRefusedError: DoIP negative acknowledgement received
+            
+            raises ConnectionRefusedError: DoIP connection attempt failed
 
         **Usage:**
 
             # Explicitly specifies all diagnostic message properties 
 
             * Reconnect To Ecu |
-            * Receive Diagnostic Message | timeout=10 |
+            * Reconnect To Ecu | close_delay=10 |
         """
-        if self.client is not None:
+        if self.client is None:
+            error_message = f"No active DoIP connection. Unable to reconnect connection."
+            logger.error(error_message)
+            raise ConnectionRefusedError(error_message)
+        
+        try:
             self.client.reconnect(close_delay)
-        else:
-            logger.warning(f"No active DoIP connection. Unable to close connection.")
+        except Exception as e:
+            error_message = f"Unable to reconnect connection: {e}"
+            raise ConnectionRefusedError(error_message)
 
     @keyword("Disconnect")
     def disconnect(self):
@@ -261,7 +245,8 @@ class DoipKeywords(object):
 
         **Exception:**
 
-            None
+            raises ConnectionRefusedError: DoIP connection attempt failed
+            raises ConnectionAbortedError: close DoIP connection aborted
 
         **Usage:**
 
@@ -269,10 +254,17 @@ class DoipKeywords(object):
 
             * Disconnect 
         """
-        if self.client is not None:
+        if self.client is None:
+            error_message = f"No active DoIP connection. Unable to close connection."
+            logger.error(error_message)
+            raise ConnectionRefusedError(error_message)
+
+        try:
             self.client.close() 
-        else:
-            logger.warning(f"No active DoIP connection. Unable to close connection.")
+        except Exception as e:
+            error_message = f"Unable to clone connection: {e}"
+            raise ConnectionAbortedError(error_message)
+
         
     @keyword("Await Vehicle Annoucement")
     def await_vehicle_announcement(

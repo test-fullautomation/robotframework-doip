@@ -8,3 +8,4 @@ Connect To ECU with Target and Client and Send Diagnostic Message
     Send Diagnostic Message    1001
     ${resp}=    Receive Diagnostic Message
     Log To Console    ${resp}
+    Disconnect

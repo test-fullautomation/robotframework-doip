@@ -401,7 +401,7 @@ class DoipKeywords(object):
             resp = self.client.request_entity_status()
             logger.info(f"Entity response payload_type: {resp.payload_type}")
         else:
-            logger.warning(f"No active DoIP connection. Unable to request entity status.")
+            logger.warn(f"No active DoIP connection. Unable to request entity status.")
     
     @keyword("Request Vehicle Identification")
     def request_vehicle_identification(
@@ -450,7 +450,7 @@ class DoipKeywords(object):
             logger.info(f"logical_address: {resp.logical_address}")
             logger.info(f"vin_sync_status: {resp.vin_sync_status}")
         else:
-            logger.warning(f"No active DoIP connection. Unable to request vehicle identification.")
+            logger.warn(f"No active DoIP connection. Unable to request vehicle identification.")
 
 
     @keyword("Request Alive Check")
@@ -482,7 +482,7 @@ class DoipKeywords(object):
             resp = self.client.request_alive_check()
             logger.info(f"source_address: {resp.source_address}")
         else:
-            logger.warning(f"No active DoIP connection. Unable to request alive.")
+            logger.warn(f"No active DoIP connection. Unable to request alive.")
 
     @keyword("Request Routing Activation")
     def request_activation(
@@ -527,7 +527,7 @@ class DoipKeywords(object):
             logger.info(f"client_logical_address: {resp.client_logical_address}")
             logger.info(f"logical_address: {resp.logical_address}")
         else:
-            logger.warning(f"No active DoIP connection. Unable to request routing activation.")
+            logger.warn(f"No active DoIP connection. Unable to request routing activation.")
 
     @keyword("Request Diagnostic Power Mode")
     def request_diagnostic_power_mode(self):
@@ -556,4 +556,4 @@ class DoipKeywords(object):
             resp = self.client.request_diagnostic_power_mode()
             logger.info(f"diagnostic_power_mode: {resp.diagnostic_power_mode}")
         else:
-            logger.warning(f"No active DoIP connection. Unable to request diagnostic power mode.")
+            logger.warn(f"No active DoIP connection. Unable to request diagnostic power mode.")

@@ -64,8 +64,8 @@
   - Example: `${res}=    Receive Diagnostic Message`  
 
 - **New Keyword: `Disconnect`**
-      - Close DoIP Connection.
-      - Example: `Disconnect`
+  - Close DoIP Connection.
+  - Example: `Disconnect`
 
 **Example for diagnostic message**
 

@@ -49,7 +49,11 @@
 "
 **First release of component RobotFramework DoIP (version 0.1.0)**
 
-Available now are the following new keywords:
+``Library    RobotFramework_DoIP``
+    Includes the DoIP library into your project.
+
+
+The following keywords are available now:
 
 ``Connect To ECU``
     Initializes the **DoIP** connection with the specified host and port.

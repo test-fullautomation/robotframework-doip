@@ -47,39 +47,32 @@
    "RELEASES"  : {
                    "0.10." : [
 "
-**Release the first version for RobotFramework DoIP 0.1.0**
+**First release of component RobotFramework DoIP (version 0.1.0)**
 
-**Keywords usage**
+Available now are the following new keywords:
 
-- **New Keyword: `Connect To ECU`**
-  - Initializes the DoIP connection with the specified host and port.
-  - Example: `Connect To ECU    192.168.1.1    13400`
+``Connect To ECU``
+    Initializes the **DoIP** connection with the specified host and port.
 
-- **New Keyword: `Send Diagnostic Message`**
-  - Sends a DoIP request with the specified payload.
-  - Example: `Send Diagnostic Message    1040`
+``Send Diagnostic Message``
+    Sends a **DoIP** request with the specified payload.
 
-- **New Keyword: `Receive Diagnostic Message`**
-  - Receive the message response after send diagnostic message.
-  - Example: `${res}=    Receive Diagnostic Message`  
+``Receive Diagnostic Message``
+    Receive the message response after send diagnostic message.
 
-- **New Keyword: `Disconnect`**
-  - Close DoIP Connection.
-  - Example: `Disconnect`
+``Disconnect``
+    Close **DoIP** Connection.
 
-**Example for diagnostic message**
+**Code example: diagnostic message**
 
-   `Connect To ECU    192.168.1.1    13400`  
-      
-   `Send Diagnostic Message    1040`        
-
-   `${res}=    Receive Diagnostic Message`  
-
-   `Disconnect`
+  | ``Connect To ECU    192.168.1.1    13400``
+  | ``Send Diagnostic Message    1040``
+  | ``${res}=    Receive Diagnostic Message``
+  | ``Disconnect``
 
 **Notes**
 
-- The library now supports only one active DoIP connection to the target.
+- The library now supports only one active **DoIP** connection to the target.
 - Users should be aware that attempting to establish multiple connections may result in unexpected behavior.
 "
                              ]

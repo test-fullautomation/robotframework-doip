@@ -18,6 +18,6 @@
 #
 # Version and date of RobotFramework_DoIP
 #
-VERSION      = "0.1.0"
-VERSION_DATE = "20.09.2023"
+VERSION      = "0.1.2"
+VERSION_DATE = "08.04.2024"
 

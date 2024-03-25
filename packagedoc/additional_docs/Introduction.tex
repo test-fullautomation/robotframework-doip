@@ -18,11 +18,89 @@
 
 % Introduction
 
-\pkg\ is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using the Diagnostics over Internet Protocol (DoIP).
+\section{Overview}
+
+\pkg\ is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using 
+the Diagnostics over Internet Protocol (DoIP).
 
 At its core, DoIP serves as a communication bridge between external diagnostic tools and a vehicle's ECUs. This library, RobotFrameworkDoIP, 
-provides a set of keywords that enable users to perform diagnostic operations and engage with ECUs, facilitating automated testing processes and interaction with vehicles through the DoIP protocol.
+provides a set of keywords that enable users to perform diagnostic operations and engage with ECUs, facilitating automated testing processes 
+and interaction with vehicles through the DoIP protocol.
 
 The \pkg\ sources can be found in repository \repo:
 \href{https://github.com/test-fullautomation/robotframework-doip}{DoIP}
 
+
+\section{Abbreviations}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Abbreviation}
+  \label{tab:abbreviations}
+  \begin{tabular}{|m{3cm}|m{7cm}|}
+    \hline
+    \textbf{Abbreviation / Acronym} & \textbf{Description} \\
+    \hline
+    ARP & Address Resolution Protocol \\
+    \hline
+    DHCP & Diagnostic Host Configuration Protocol \\
+    \hline
+    EID & Entity identifier \\
+    \hline
+    GID & Group identifier \\
+    \hline
+    ICMP & Internet Control Message Protocol \\
+    \hline
+    IP & Internet Protocol \\
+    \hline
+    IPv4 & Internet Protocol version 4 \\
+    \hline
+    IPv6 & Internet Protocol version 6 \\
+    \hline
+    TCP & Transmission Control Protocol \\
+    \hline
+    TCP/IP & A family of communication protocols used in computer networks \\
+    \hline
+    VIN & Vehicle Identification Number \\
+    \hline
+    UDP & User Datagram Protocol \\
+    \hline
+  \end{tabular}
+\end{table}
+
+
+
+\section{Terms and definitions}
+
+\subsection{Diagnostic Power Mode}
+Abstract vehicle internal power supply state, which affects the diagnostic capabilities of all servers on the 
+in-vehicle networks and which identifies the state of all servers of all gateway sub-networks that allow diagnostic 
+communication
+
+\subsection{Transport protocol}
+The important thing here is that DoIP does not represent a diagnostic protocol according to ISO 
+13400 but rather an expanded transport protocol. This means that the transmission of diagnostic packets is defined 
+in DoIP, but the contained diagnostic services continue to be specified and described by diagnostic protocols 
+such as KWP2000 and UDS.
+
+\subsection{Diagnostics tester} 
+Same as for diagnostics with classic bus systems, a diagnostic tester enables the sending of 
+diagnostic requests. Testers can take the form of external devices, such as in repair shops, or on-board testers in 
+the vehicle. The receiving ECU must, in turn, process the diagnostic requests and return an associated diagnostic 
+response to the tester. However, this requires that DoIP as well as underlying layers be implemented in each directly 
+diagnosable ECU.
+
+\subsection{Diagnostics gateway}
+So that a separate implementation is not needed for each ECU, DoIP allows the use of diagnostic 
+gateways. Thus, all ECUs of a vehicle that are connected via a classic bus system or network can be made available in 
+principle. The gateway assumes the role of the intermediary. Requests of the tester are forwarded to internal networks 
+so that a desired ECU can receive and process them. As soon as a response from the requested ECU is available, the gateway 
+routes this back to the tester.
+
+\subsection{Logical addresses} 
+Address identifying a diagnostic application layer entity.
+
+A diagnostic gateway always requires two pieces of information in order to forward diagnostic requests
+and responses. First, it needs a logical address that uniquely identifies the ECU to be diagnosed in the vehicle. Second, 
+the gateway must know which messages on the respective bus system or network will be used to send diagnostic requests and 
+to receive diagnostic responses. Both pieces of information must be available for an ECU for it to be accessible via the gateway.

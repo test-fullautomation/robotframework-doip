@@ -1,0 +1,163 @@
+% --------------------------------------------------------------------------------------------------------------
+%
+% Copyright 2020-2023 Robert Bosch GmbH
+
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+
+% http://www.apache.org/licenses/LICENSE-2.0
+
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+%
+% --------------------------------------------------------------------------------------------------------------
+
+\section{Background}
+Modern cars are becoming computers on wheels. They can use up to 70 or more Electronic Control Units (ECU) for 
+performing various critical functions. These ECUs are embedded systems that maintain and oversee critical functions 
+ranging from fuel injection, cabin room temperature to brakes and suspensions. These devices digest data from local 
+sensors and perform calibrations to keep everything in order.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./pictures/ECUs-in-modern-cars.png}
+    \caption{ECUs in modern cars}
+    \label{fig:2.1}
+\end{figure}
+
+In the automotive industry, “vehicle diagnostics” refers to an inspection of the vehicle to identify any faults and 
+guarantee the smooth operation of all the mechanical, software, and hardware components. These components are usually 
+the ECUs in modern cars.
+
+Typically, a manual vehicle diagnosis is carried out by connecting test equipment to the car’s physical ports. 
+These on-site vehicle diagnostic methods are not always a practical choice.
+
+Moving forward, the Original Equipment Manufacturers (OEM) began to give some expensive cars the ability to get over-the-air 
+diagnostics through the network connection. What began with a brand-specific method soon became a standard that we now know 
+as Diagnostics over IP (DoIP).
+
+Nowadays, most of the popular automobile brands such as BMW, Porsche and Ferrari have equipment that can leverage DoIP.
+
+
+
+\newpage
+% --------------------------------------------------------------------------------------------------------------
+\section{System Overview}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./pictures/systems-overview.png}
+    \caption{System overview}
+    \label{fig:2.2}
+\end{figure}
+
+\begin{itemize}
+
+\item The DoIP (Diagnostics over Internet Protocol) protocol is a standard for vehicle diagnostics that allows communication 
+between diagnostic devices and electronic control units over Ethernet networks.
+
+\item DoIP is a standardized diagnostic transport protocol according to ISO 13400.
+    \begin{itemize}
+
+    \item DoIP Transport Layer (ISO 13400-2) is equipped with features to establish and maintain connection between external 
+    tester device and DoIP gateway inside the vehicle.
+    
+    \item UDS application layer (ISO 14229-5) is the application profile that implements UDS on IP.
+
+    \end{itemize}
+
+\item The overall goal of the protocol is to encapsulate diagnostics messages of protocol standards like Unified Diagnostic Services (UDS)
+and route them to and from the ECU.
+
+\item The DoIP gateway or server can be a part of the ECU. A vehicle can have multiple DoIP entities and multiple testing devices and 
+ECUs can route their traffic via a single DoIP entity. 
+
+\item DoIP uses both User Datagram Protocol (UDP) and Transmission Control Protocol (TCP) for specific phases of the underlying layer. 
+The initial announcement and identification messages are over UDP, after which the communication switches over to TCP.
+
+\end{itemize}
+
+
+
+
+\newpage
+% --------------------------------------------------------------------------------------------------------------
+\section{DoIP application scenarios}
+
+This section will provide some features along with examples:
+\begin{itemize}
+
+    \item Vehicle identification and announcement: Is necessary to detect who is participating in the DoIP communication.
+
+    \item Request diagnostic message: Request for diagnostic information, which is crucial for diagnosing vehicle issues 
+    and ensuring effective communication within the DoIP network.
+
+    \item Routing Activation: Allows that single Diagnostic Message pathes are activated or not to treat different protocols 
+    different (like UDS and OBD) and to also treat single testers different.
+        
+    \item Node information: Provides general information of the single DoIP entity. Usually used by the testers to get the
+     current DoIP protocol relevant information from the single DoIPEntities.
+
+    \item Alive mechanism: Is used to maintain different tester connections.
+
+\end{itemize}
+
+    % ---------------------------------------------
+    \subsection{Example of Diagnostic Process}
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./pictures/setup-system-test.png}
+        \caption{System test for diagnostic process}
+        \label{fig:2.3}
+    \end{figure}
+
+    In this example, we will learn how to 
+
+    \begin{robotcode}
+*** Settings ***
+Library    RobotFramework_DoIP
+
+*** Test Cases ***
+Test Establish an DoIP connection
+    # Establish an connection to ecu ip address and ecu logical address
+    Connect To ECU     192.168.108.1      205
+    Send Diagnostic Message     600
+    ${res}= Receive Diagnostic Message
+    Log To Console    ${resp}
+    Disconnect
+
+Test Establish an DoIP connection between specific tester and target ECU 
+    # Establish an connection to ecu ip address and ecu logical address
+    Connect To ECU     192.168.108.1      205       client_ip_address=192.168.108.10    client_logical_address=3584
+    Send Diagnostic Message     600
+    ${res}= Receive Diagnostic Message
+    Log To Console    ${resp}
+    Disconnect
+    \end{robotcode}
+
+    % ---------------------------------------------
+    \subsection{Example of Vehicle Identification}
+
+    In a DoIP communication scenario, it is essential to detect and identify the participating vehicles. This allows for 
+    effective communication management and ensures that diagnostic messages are appropriately routed to the intended recipients. 
+    Vehicle identification helps in monitoring and managing the overall communication network, facilitating seamless interaction 
+    between diagnostic tools and vehicle ECUs.
+
+    \begin{robotcode}
+*** Settings ***
+Library    RobotFramework_DoIP
+
+*** Test Cases ***
+Test Request Vehicle Identification
+    Connect To ECU     192.168.108.1      205
+    Request Vehicle Identification 
+
+    \end{robotcode}
+
+% --------------------------------------------------------------------------------------------------------------
+

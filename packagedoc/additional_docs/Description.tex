@@ -88,7 +88,14 @@ The initial announcement and identification messages are over UDP, after which t
 % --------------------------------------------------------------------------------------------------------------
 \section{DoIP application scenarios}
 
-This section will provide some features along with examples:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./pictures/setup-system-test.png}
+    \caption{System test for diagnostic process}
+    \label{fig:2.3}
+\end{figure}
+
+This section will provide some features along with examples through system above:
 \begin{itemize}
 
     \item Vehicle identification and announcement: Is necessary to detect who is participating in the DoIP communication.
@@ -106,19 +113,32 @@ This section will provide some features along with examples:
 
 \end{itemize}
 
+    \newpage
     % ---------------------------------------------
     \subsection{Example of Diagnostic Process}
 
-    \begin{figure}[htbp]
-        \centering
-        \includegraphics[width=0.8\textwidth]{./pictures/setup-system-test.png}
-        \caption{System test for diagnostic process}
-        \label{fig:2.3}
-    \end{figure}
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics[width=0.8\textwidth]{./pictures/diagnostic-process-in-system.png}
+            \caption{Diagnostic process demonstration}
+            \label{fig:2.3}
+        \end{figure}
 
-    In this example, we will learn how to 
+        % ---------------------------------
+        \subsubsection{Vehicle Diagnostics}
+            \begin{itemize}
+                \item\textbf{Use Case:}\\
+                    A vehicle diagnostic tool needs to establish a DoIP connection to communicate with an Electronic Control Unit (ECU)
+                    within a vehicle for diagnostic purposes.
 
-    \begin{robotcode}
+                \item\textbf{Scenario:} \\
+                    The diagnostic tool initiates a connection to the ECU's IP address (192.168.108.1) and logical address (205) using 
+                    the \pkg\ library. \\
+                    It sends a diagnostic message (600) to the ECU, receives a response, logs the response 
+                    to the console, and then disconnects from the ECU.
+            \end{itemize}
+
+        \begin{robotcode}
 *** Settings ***
 Library    RobotFramework_DoIP
 
@@ -130,7 +150,27 @@ Test Establish an DoIP connection
     ${res}= Receive Diagnostic Message
     Log To Console    ${resp}
     Disconnect
+        \end{robotcode}
 
+        % ---------------------------------
+        \subsubsection{Remote Testing}
+            \begin{itemize}
+                \item\textbf{Use Case:}\\
+                    A remote testing environment requires a connection between a target tester and an ECU located in a different location.
+
+                \item\textbf{Scenario:} \\
+                    The target tester, located at IP address 192.168.108.10, establishes a DoIP connection to the ECU at IP address 192.168.108.1 
+                    and logical address 205. Additionally, the target tester specifies its own logical address (3584) using the \pkg\ 
+                    library. \\
+                    It sends a diagnostic message (600) to the ECU, receives a response, logs the response to the console, and then disconnects 
+                    from the ECU.
+            \end{itemize}
+
+            \begin{robotcode}
+*** Settings ***
+Library    RobotFramework_DoIP
+
+*** Test Cases ***
 Test Establish an DoIP connection between specific tester and target ECU 
     # Establish an connection to ecu ip address and ecu logical address
     Connect To ECU     192.168.108.1      205       client_ip_address=192.168.108.10    client_logical_address=3584
@@ -138,17 +178,20 @@ Test Establish an DoIP connection between specific tester and target ECU
     ${res}= Receive Diagnostic Message
     Log To Console    ${resp}
     Disconnect
-    \end{robotcode}
+            \end{robotcode}
 
     % ---------------------------------------------
     \subsection{Example of Vehicle Identification}
+        \begin{itemize}
+            \item\textbf{Use Case:}\\
+                A diagnostic tool needs to request vehicle identification information from an Electronic Control Unit (ECU) within a vehicle.
 
-    In a DoIP communication scenario, it is essential to detect and identify the participating vehicles. This allows for 
-    effective communication management and ensures that diagnostic messages are appropriately routed to the intended recipients. 
-    Vehicle identification helps in monitoring and managing the overall communication network, facilitating seamless interaction 
-    between diagnostic tools and vehicle ECUs.
+            \item\textbf{Scenario:} \\
+                The diagnostic tool initiates a DoIP connection to the ECU's IP address (192.168.108.1) and logical address (205) using the 
+                \pkg\ library. It then sends a request for vehicle identification information to the ECU.
+        \end{itemize}
 
-    \begin{robotcode}
+        \begin{robotcode}
 *** Settings ***
 Library    RobotFramework_DoIP
 
@@ -157,7 +200,7 @@ Test Request Vehicle Identification
     Connect To ECU     192.168.108.1      205
     Request Vehicle Identification 
 
-    \end{robotcode}
+        \end{robotcode}
 
 % --------------------------------------------------------------------------------------------------------------
 

@@ -79,6 +79,11 @@ The following keywords are available now:
 - The library now supports only one active **DoIP** connection to the target.
 - Users should be aware that attempting to establish multiple connections may result in unexpected behavior.
 "
-                             ]
+                             ], 
+                    "0.11." : [
+"
+* Updated the documents for RobotFramework_DoIP.
+"
+                            ]
                  }
 }

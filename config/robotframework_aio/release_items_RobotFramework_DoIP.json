@@ -83,6 +83,7 @@ The following keywords are available now:
                     "0.11." : [
 "
 * Updated the documents for RobotFramework_DoIP.
+* Implemented the workflow for publishing packages on PyPi.
 "
                             ]
                  }

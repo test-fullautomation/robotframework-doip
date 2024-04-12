@@ -39,7 +39,7 @@ jobs:
             ls -la
             curl -O https://github.com/test-fullautomation/RobotFramework_AIO/releases/download/rel%2Faio%2F0.11.0.3/setup_RobotFramework_AIO_Linux_0.11.0.3.deb
             ls -la
-            sudo apt-get install ./*.deb --fix-missing
+            sudo dpkg -i setup_RobotFramework_AIO_Linux_0.11.0.3.deb
 
         - name: Build source and wheel distributions
           run: |

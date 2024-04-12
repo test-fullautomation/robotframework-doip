@@ -2,9 +2,8 @@ name: Publish RobotFramework DoIP to PyPI
 
 on:
   push:
-    tags:
-      - "rel/*.*.*"
-      - "rel/*.*.*.*"
+    branches: 
+      - htv3hc/test/feature
 
 jobs:
   build-n-publish:
@@ -25,7 +24,7 @@ jobs:
             sudo apt-get install -y pandoc
             sudo apt-get install -y texlive-latex-*
             echo "GENDOC_LATEXPATH=$(dirname $(which pdflatex))" >> $GITHUB_ENV
-            python -m pip install --upgrade build twine wheel GenPackageDoc PythonExtensionsCollection
+            python -m pip install --upgrade build twine wheel robot GenPackageDoc PythonExtensionsCollection
 
         - name: Build source and wheel distributions
           run: |

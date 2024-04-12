@@ -24,7 +24,7 @@ jobs:
             sudo apt-get install -y pandoc
             sudo apt-get install -y texlive-latex-*
             echo "GENDOC_LATEXPATH=$(dirname $(which pdflatex))" >> $GITHUB_ENV
-            python -m pip install --upgrade build twine wheel robot GenPackageDoc PythonExtensionsCollection
+            python -m pip install --upgrade build twine wheel robot robot.api GenPackageDoc PythonExtensionsCollection
 
         # - name: Download Linux installer package
         #   uses: actions/download-artifact@v4
@@ -34,12 +34,12 @@ jobs:
         #     repository: test-fullautomation/RobotFramework_AIO
         #     run-id: 8648857135
 
-        - name: Install RobotFramework AIO
-          run: |
-            ls -la
-            curl -O https://github.com/test-fullautomation/RobotFramework_AIO/releases/download/rel%2Faio%2F0.11.0.3/setup_RobotFramework_AIO_Linux_0.11.0.3.deb
-            ls -la
-            sudo dpkg -i setup_RobotFramework_AIO_Linux_0.11.0.3.deb
+        # - name: Install RobotFramework AIO
+        #   run: |
+        #     ls -la
+        #     curl -O https://github.com/test-fullautomation/RobotFramework_AIO/releases/download/rel%2Faio%2F0.11.0.3/setup_RobotFramework_AIO_Linux_0.11.0.3.deb
+        #     ls -la
+        #     sudo dpkg -i setup_RobotFramework_AIO_Linux_0.11.0.3.deb
 
         - name: Build source and wheel distributions
           run: |

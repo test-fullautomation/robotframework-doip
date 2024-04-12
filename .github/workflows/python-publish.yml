@@ -26,18 +26,20 @@ jobs:
             echo "GENDOC_LATEXPATH=$(dirname $(which pdflatex))" >> $GITHUB_ENV
             python -m pip install --upgrade build twine wheel robot GenPackageDoc PythonExtensionsCollection
 
-        - name: Download Linux installer package
-          uses: actions/download-artifact@v4
-          with:
-            name: linux-package 
-            github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
-            repository: test-fullautomation/RobotFramework_AIO
-            run-id: 8648857135
+        # - name: Download Linux installer package
+        #   uses: actions/download-artifact@v4
+        #   with:
+        #     name: linux-package 
+        #     github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
+        #     repository: test-fullautomation/RobotFramework_AIO
+        #     run-id: 8648857135
 
         - name: Install RobotFramework AIO
           run: |
             ls -la
-            sudo apt-get update
+            curl -O -L "https://github.com/test-fullautomation/RobotFramework_AIO/actions/runs/8648857135/artifacts/1405698922"
+            ls -la
+            unzip linux-package 
             sudo apt-get install ./*.deb --fix-missing
 
         - name: Build source and wheel distributions

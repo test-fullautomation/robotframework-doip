@@ -37,9 +37,8 @@ jobs:
         - name: Install RobotFramework AIO
           run: |
             ls -la
-            curl -O -L "https://github.com/test-fullautomation/RobotFramework_AIO/actions/runs/8648857135/artifacts/1405698922"
+            curl -O https://github.com/test-fullautomation/RobotFramework_AIO/releases/download/rel%2Faio%2F0.11.0.3/setup_RobotFramework_AIO_Linux_0.11.0.3.deb
             ls -la
-            unzip linux-package 
             sudo apt-get install ./*.deb --fix-missing
 
         - name: Build source and wheel distributions

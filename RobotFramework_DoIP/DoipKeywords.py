@@ -557,3 +557,41 @@ class DoipKeywords(object):
             logger.info(f"diagnostic_power_mode: {resp.diagnostic_power_mode}")
         else:
             logger.warn(f"No active DoIP connection. Unable to request diagnostic power mode.")
+
+    @keyword("Build payload")
+    def build_payload(self, request):
+        """
+        **Description:**
+
+            Build payload
+
+        **Parameters:**
+
+            * param ``request`` (required): hex data
+            * type ``request``: hex
+
+        **Return:**
+
+            return bytes data of the request
+
+        **Exception:**
+
+            * raise ValueError: if request is None
+
+        **Usage:**
+
+            * Build payload by protocol version | ${request}
+            * Build payload by protocol version | hex_value
+        """
+
+        if request is None:
+            raise ValueError("The request cannot be None.")
+
+        msg = bytes.fromhex(request)
+        from doipclient import messages
+        message = messages.DiagnosticMessage(self.client._client_logical_address, self.client._ecu_logical_address, msg)
+        rtype = messages.payload_message_to_type[type(message)]
+        rdata = message.pack()
+        data_bytes = self.client._pack_doip(self.client._protocol_version, rtype, rdata)
+
+        return bytes(data_bytes)

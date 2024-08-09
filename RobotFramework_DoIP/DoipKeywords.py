@@ -11,6 +11,7 @@ from .constants import (
 )
 
 from doipclient import DoIPClient
+from doipclient import messages
 import binascii
 
 class DoipKeywords(object):
@@ -588,7 +589,6 @@ class DoipKeywords(object):
             raise ValueError("The request cannot be None.")
 
         msg = bytes.fromhex(request)
-        from doipclient import messages
         message = messages.DiagnosticMessage(self.client._client_logical_address, self.client._ecu_logical_address, msg)
         rtype = messages.payload_message_to_type[type(message)]
         rdata = message.pack()

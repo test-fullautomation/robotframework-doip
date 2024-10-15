@@ -85,6 +85,11 @@ The following keywords are available now:
 * Updated the documents for RobotFramework_DoIP.
 * Implemented the workflow for publishing packages on PyPi.
 "
+                            ],
+                    "0.13." : [
+"
+** Add the DoIP keywords to support working with multiple connections.**
+"
                             ]
                  }
 }

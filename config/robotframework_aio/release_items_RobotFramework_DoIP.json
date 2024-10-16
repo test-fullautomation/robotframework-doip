@@ -86,9 +86,21 @@ The following keywords are available now:
 * Implemented the workflow for publishing packages on PyPi.
 "
                             ],
-                    "0.13." : [
+                    "0.13.1" : [
 "
 ** Add the DoIP keywords to support working with multiple connections.**
+
+**Code example: multiple connection**
+
+  | ``Connect To ECU    192.168.1.1    13400    device_name=device_1``
+  | ``Send Diagnostic Message    1040    device_name=device_1``
+  | ``${res}=    Receive Diagnostic Message    device_name=device_1``
+  | ``Disconnect    device_name=device_1``
+
+  | ``Connect To ECU    192.168.1.3    13400    device_name=device_2``
+  | ``Send Diagnostic Message    1040    device_name=device_2``
+  | ``${res}=    Receive Diagnostic Message    device_name=device_2``
+  | ``Disconnect    device_name=device_2``
 "
                             ]
                  }

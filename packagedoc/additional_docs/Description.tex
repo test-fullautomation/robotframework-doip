@@ -57,6 +57,37 @@ The \pkg\ can be extended to manage multiple connections simultaneously.
 This is beneficial when working with complex vehicle systems or simultaneously
 testing multiple ECUs.
 
+\textbf{Example}
+\begin{robotcode}
+Test user can connect multiple connection
+    Log    Connect to ECU 1
+
+    Connect To ECU          device_name= ${DEVICE_NAME_1}
+    ...                     ecu_ip_address= ${SUT_IP_ADDRESS_1}
+    ...                     ecu_logical_address= ${SUT_LOGICAL_ADDRESS_1}
+    ...                     client_ip_address= ${TB_IP_ADDRESS_1}
+    ...                     client_logical_address= ${TB_LOGICAL_ADDRESS_1}
+    ...                     activation_type= ${ACTIVATION_TYPE_1}
+
+    Send Diagnostic Message    1001    device_name= ${DEVICE_NAME_1}
+    ${resp}=    Receive Diagnostic Message    device_name= ${DEVICE_NAME_1}
+    Log To Console    ${resp}
+    Disconnect    device_name= ${DEVICE_NAME_1}
+
+    Log    Connect to ECU 2
+    Connect To ECU          device_name= ${DEVICE_NAME_2}
+    ...                     ecu_ip_address= ${SUT_IP_ADDRESS_2}
+    ...                     ecu_logical_address= ${SUT_LOGICAL_ADDRESS_2}
+    ...                     client_ip_address= ${TB_IP_ADDRESS_2}
+    ...                     client_logical_address= ${TB_LOGICAL_ADDRESS_2}
+    ...                     activation_type= ${ACTIVATION_TYPE_2}
+
+    Send Diagnostic Message    1001    device_name= ${DEVICE_NAME_2}
+    ${resp}=    Receive Diagnostic Message    device_name= ${DEVICE_NAME_2}
+    Log To Console    ${resp}
+    Disconnect    device_name= ${DEVICE_NAME_2}
+\end{robotcode}
+
 % --------------------------------------------------------------------------------------------------------------
 \section{DoIP application scenarios}
 

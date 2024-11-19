@@ -17,10 +17,9 @@ import binascii
 class DoipDeviceManager(object):
     def __init__(self):
         self.doip_device = {}
-        self.uds_device_available = []
 
     def is_device_exist(self, name):
-        if name in self.uds_device:
+        if name in self.doip_device:
             return True
         return False
 
@@ -111,16 +110,21 @@ class DoipKeywords(object):
             if self.doip_device_manager.is_device_exist(device_name):
                 raise ValueError(f"Device with name '{device_name}' already exists.")
 
+            if isinstance(ecu_logical_address, str):
+                ecu_logical_address = int(ecu_logical_address)
+
+            if isinstance(client_logical_address, str):
+                client_logical_address = int(client_logical_address)
 
             client = DoIPClient(
-                ecu_ip_address,
+                ecu_ip_address.strip(),
                 ecu_logical_address,
                 tcp_port=tcp_port,
                 udp_port=udp_port,
                 activation_type=activation_type,
                 protocol_version=protocol_version,
                 client_logical_address=client_logical_address,
-                client_ip_address=client_ip_address,
+                client_ip_address=client_ip_address.strip(),
                 use_secure=use_secure,
                 auto_reconnect_tcp=auto_reconnect_tcp,
             )

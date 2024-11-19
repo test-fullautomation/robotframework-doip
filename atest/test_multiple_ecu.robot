@@ -1,6 +1,5 @@
 *** Settings ***
 Library    RobotFramework_TestsuitesManagement    WITH NAME    testsuites
-Library    RobotFramework_UDS
 Library    RobotFramework_DoIP
 
 *** Variables ***
@@ -23,13 +22,13 @@ Test user can connect single connection
     Log    Test user can connect single connection
     Log    If no device_name is provided, it will default to 'default'
 
-    Create UDS Connector    ecu_ip_address= ${SUT_IP_ADDRESS_1}
-    ...                     ecu_logical_address= ${SUT_LOGICAL_ADDRESS_1}
-    ...                     client_ip_address= ${TB_IP_ADDRESS_1}
-    ...                     client_logical_address= ${TB_LOGICAL_ADDRESS_1}
-    ...                     activation_type= ${ACTIVATION_TYPE_1}
+    Connect To ECU    ecu_ip_address= ${SUT_IP_ADDRESS_1}
+    ...               ecu_logical_address= ${SUT_LOGICAL_ADDRESS_1}
+    ...               client_ip_address= ${TB_IP_ADDRESS_1}
+    ...               client_logical_address= ${TB_LOGICAL_ADDRESS_1}
+    ...               activation_type= ${ACTIVATION_TYPE_1}
 
-    Send Diagnostic Message    1001
+    Send Diagnostic Message    1040
     ${resp}=    Receive Diagnostic Message
     Log To Console    ${resp}
     Disconnect
@@ -75,9 +74,9 @@ Test user can connect multiple connection but connect to the same ECU
 
     Log    Connect to device 2 but same IP as device 1
     Log    The expected test case result in an error
-    Run Keyword And Expect Error    TimeoutError: ECU failed to respond in time    Connect To ECU          device_name= ${DEVICE_NAME_2}
-    ...                                                                                                    ecu_ip_address= ${SUT_IP_ADDRESS_1}
-    ...                                                                                                    ecu_logical_address= ${SUT_LOGICAL_ADDRESS_1}
-    ...                                                                                                    client_ip_address= ${TB_IP_ADDRESS_1}
-    ...                                                                                                    client_logical_address= ${TB_LOGICAL_ADDRESS_1}
-    ...                                                                                                    activation_type= ${ACTIVATION_TYPE_1}
+    Run Keyword And Expect Error    ConnectionError: An error occurred while connecting: ECU failed to respond in time    Connect To ECU          device_name= ${DEVICE_NAME_2}
+    ...                                                                                                                                           ecu_ip_address= ${SUT_IP_ADDRESS_1}
+    ...                                                                                                                                           ecu_logical_address= ${SUT_LOGICAL_ADDRESS_1}
+    ...                                                                                                                                           client_ip_address= ${TB_IP_ADDRESS_1}
+    ...                                                                                                                                           client_logical_address= ${TB_LOGICAL_ADDRESS_1}
+    ...                                                                                                                                           activation_type= ${ACTIVATION_TYPE_1}

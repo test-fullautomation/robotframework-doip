@@ -14,11 +14,31 @@ from doipclient import DoIPClient
 from doipclient import messages
 import binascii
 
-class DoipKeywords(object):
-
+class DoipDeviceManager(object):
     def __init__(self):
-        self.debug = 0
+        self.doip_device = {}
+
+    def is_device_exist(self, name):
+        if name in self.doip_device:
+            return True
+        return False
+
+class DoipDevice(object):
+    def __init__(self):
+        self.name = None
         self.client = None
+        self.debug = 0
+
+class DoipKeywords(object):
+    def __init__(self):
+        self.doip_device_manager = DoipDeviceManager()
+
+    def __device_check(self, device_name):
+        if self.doip_device_manager.is_device_exist(device_name):
+            doip_device = self.doip_device_manager.doip_device[device_name]
+            return doip_device
+        else:
+            raise ValueError(f"Device with name '{device_name}' does not exists. Please use keyword \"Connect To ECU\" to create a new one.")
 
     @keyword("Connect To ECU")
     def connect_to_ecu(
@@ -33,6 +53,7 @@ class DoipKeywords(object):
         client_ip_address=None,
         use_secure=False,
         auto_reconnect_tcp=False,
+        device_name = "default"
     ):
         """
         **Description:**
@@ -66,6 +87,8 @@ class DoipKeywords(object):
             * type ``use_secure``: Union[bool,ssl.SSLContext]
             * param ``auto_reconnect_tcp`` (optional): Attempt to automatically reconnect TCP sockets that were closed by peer
             * type ``auto_reconnect_tcp``: bool
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
         
         **Return:**
 
@@ -84,27 +107,39 @@ class DoipKeywords(object):
             * Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 | activation_type=0 |
         """
         try:
-            self.client = DoIPClient(
-                ecu_ip_address,
+            if self.doip_device_manager.is_device_exist(device_name):
+                raise ValueError(f"Device with name '{device_name}' already exists.")
+
+            if isinstance(ecu_logical_address, str):
+                ecu_logical_address = int(ecu_logical_address)
+
+            if isinstance(client_logical_address, str):
+                client_logical_address = int(client_logical_address)
+
+            client = DoIPClient(
+                ecu_ip_address.strip(),
                 ecu_logical_address,
                 tcp_port=tcp_port,
                 udp_port=udp_port,
                 activation_type=activation_type,
                 protocol_version=protocol_version,
                 client_logical_address=client_logical_address,
-                client_ip_address=client_ip_address,
+                client_ip_address=client_ip_address.strip(),
                 use_secure=use_secure,
                 auto_reconnect_tcp=auto_reconnect_tcp,
             )
+            doip_device = DoipDevice()
+            doip_device.client = client
+            self.doip_device_manager.doip_device[device_name] = doip_device
 
-            logger.info(f"Connection established successfully. Target ECU: {ecu_ip_address} | Client: {client_logical_address}")
+            logger.info(f"Connection established successfully. Device: {device_name} | Target ECU: {ecu_ip_address} | Client: {client_logical_address}")
                 
         except Exception as e:
             error_message = f"An error occurred while connecting: {e}"
             raise ConnectionError(error_message)
-    
+
     @keyword("Send Diagnostic Message")
-    def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME):
+    def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME, device_name = "default"):
         """
         **Description:**
 
@@ -116,6 +151,8 @@ class DoipKeywords(object):
             * type ``diagnostic_payload``: string
             * param ``timeout``: send diagnostic time out (default: A_PROCESSING_TIME)
             * type ``timeout``: int (s)
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -133,7 +170,9 @@ class DoipKeywords(object):
             * Send Diagnostic Message | 1040 |
             * Send Diagnostic Message | 1040 | timeout=10 |
         """
-        if self.client is None:
+        doip_device = self.__device_check(device_name)
+
+        if doip_device.client is None:
             error_message = f"No active DoIP connection. Unable to send diagnostic message."
             logger.error(error_message)
             raise ConnectionRefusedError(error_message)
@@ -141,16 +180,14 @@ class DoipKeywords(object):
         try:
             # Convert string to byte array
             msg = bytes.fromhex(diagnostic_payload)
-            self.client.send_diagnostic(msg, timeout)
+            doip_device.client.send_diagnostic(msg, timeout)
             logger.info(f"Send diagnostic message: {diagnostic_payload}")
         except Exception as e:
             error_message = f"An error occurred while sending diagnostic message: {e}"
             raise IOError(error_message)
 
-
-
     @keyword("Receive Diagnostic Message")
-    def receive_diagnostic_message(self, timeout=None):
+    def receive_diagnostic_message(self, timeout=None, device_name = "default"):
         """
         **Description:**
 
@@ -160,6 +197,8 @@ class DoipKeywords(object):
 
             * param ``timeout``: time waiting diagnostic message (default: None)
             * type ``timeout``: int (s)
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -177,13 +216,15 @@ class DoipKeywords(object):
             * Receive Diagnostic Message |
             * Receive Diagnostic Message | timeout=10 |
         """
-        if self.client is None:
+        doip_device = self.__device_check(device_name)
+
+        if doip_device.client is None:
             error_message = f"No active DoIP connection. Unable to receive diagnostic message."
             logger.error(error_message)
             raise ConnectionRefusedError(error_message)
         
         try:
-            resp = self.client.receive_diagnostic(timeout)
+            resp = doip_device.client.receive_diagnostic(timeout)
             # Convert the received byte data to a hexadecimal string
             hex_string_data = binascii.hexlify(resp).decode('utf-8')
             logger.info(f"Receive diagnostic message: {hex_string_data}")
@@ -193,7 +234,7 @@ class DoipKeywords(object):
             raise IOError(error_message)
     
     @keyword("Reconnect To Ecu")
-    def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME):
+    def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME, device_name = "default"):
         """
         **Description:**
 
@@ -203,6 +244,8 @@ class DoipKeywords(object):
 
             * param ``close_delay``: Time to wait between closing and re-opening socket (default: **A_PROCESSING_TIME**)
             * type ``close_delay``: int (s)
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
             None
@@ -218,19 +261,21 @@ class DoipKeywords(object):
             * Reconnect To Ecu |
             * Reconnect To Ecu | close_delay=10 |
         """
-        if self.client is None:
+        doip_device = self.__device_check(device_name)
+
+        if doip_device.client is None:
             error_message = f"No active DoIP connection. Unable to reconnect connection."
             logger.error(error_message)
             raise ConnectionRefusedError(error_message)
         
         try:
-            self.client.reconnect(close_delay)
+            doip_device.client.reconnect(close_delay)
         except Exception as e:
             error_message = f"Unable to reconnect connection: {e}"
             raise ConnectionRefusedError(error_message)
 
     @keyword("Disconnect")
-    def disconnect(self):
+    def disconnect(self, device_name = "default"):
         """
         **Description:**
 
@@ -238,7 +283,8 @@ class DoipKeywords(object):
 
         **Parameters:**
 
-            None
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -255,13 +301,15 @@ class DoipKeywords(object):
 
             * Disconnect 
         """
-        if self.client is None:
+        doip_device = self.__device_check(device_name)
+
+        if doip_device.client is None:
             error_message = f"No active DoIP connection. Unable to close connection."
             logger.error(error_message)
             raise ConnectionRefusedError(error_message)
 
         try:
-            self.client.close() 
+            doip_device.client.close() 
         except Exception as e:
             error_message = f"Unable to clone connection: {e}"
             raise ConnectionAbortedError(error_message)
@@ -275,6 +323,7 @@ class DoipKeywords(object):
         ipv6=False,
         source_interface=None,
         sock=None,
+        device_name = "default"
     ):
         """
         **Description:**
@@ -296,6 +345,8 @@ class DoipKeywords(object):
                 will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
                 which will bind to all interfaces uses INADDR_ANY.
             * type ``source_interface``: str, optional
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -314,6 +365,7 @@ class DoipKeywords(object):
             * Await Vehicle Annoucement | timeout=10
         """
         try:
+            self.__device_check(device_name)
             address, announcement = DoIPClient.await_vehicle_announcement(udp_port, timeout, ipv6, source_interface, sock)
             logical_address = announcement.logical_address
             ip, port = address
@@ -330,6 +382,7 @@ class DoipKeywords(object):
         protocol_version=0x02, 
         eid=None, 
         vin=None,
+        doip_device = "default"
     ):
         """
         **Description:**
@@ -351,6 +404,8 @@ class DoipKeywords(object):
                 will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
                 which will bind to all interfaces uses INADDR_ANY.
             * type ``source_interface``: str, optional
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -368,6 +423,7 @@ class DoipKeywords(object):
             * Get Entity | ecu_ip_address=172.17.0.111 | protocol_version=0x02
         """
         try:
+            doip_device = self.__device_check(device_name)
             address, announcement = DoIPClient.get_entity(ecu_ip_address, protocol_version, eid, vin)
             logical_address = announcement.logical_address
             ip, port = address
@@ -376,7 +432,7 @@ class DoipKeywords(object):
             logger.error(f"An error occurred while get entity: {e}")
 
     @keyword("Request Entity Status")
-    def request_entity_status(self):
+    def request_entity_status(self, device_name = "default"):
         """
         **Description:**
 
@@ -384,7 +440,8 @@ class DoipKeywords(object):
 
         **Parameters:**
 
-            None
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -398,8 +455,9 @@ class DoipKeywords(object):
 
             * Request Entity Status 
         """
-        if self.client is not None:
-            resp = self.client.request_entity_status()
+        doip_device = self.__device_check(device_name)
+        if doip_device.client is not None:
+            resp = doip_device.client.request_entity_status()
             logger.info(f"Entity response payload_type: {resp.payload_type}")
         else:
             logger.warn(f"No active DoIP connection. Unable to request entity status.")
@@ -409,6 +467,7 @@ class DoipKeywords(object):
         self, 
         eid=None,
         vin=None,
+        device_name = "default"
     ):
         """
         **Description:**
@@ -422,6 +481,8 @@ class DoipKeywords(object):
             :type eid: bytes, optional
             :param vin: VIN of the Vehicle
             :type vin: str, optional
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -437,13 +498,14 @@ class DoipKeywords(object):
             * Request Vehicle Identification | eid=0x123456789abc
             * Request Vehicle Identification | vin=0x123456789abc
         """
-        if self.client is not None:
+        doip_device = self.__device_check(device_name)
+        if doip_device.client is not None:
             if eid is not None:
-                resp = self.client.request_vehicle_identification(eid)
+                resp = doip_device.client.request_vehicle_identification(eid)
             elif vin is not None:
-                resp = self.client.request_vehicle_identification(vin)
+                resp = doip_device.client.request_vehicle_identification(vin)
             else:
-                resp = self.client.request_vehicle_identification()
+                resp = doip_device.client.request_vehicle_identification()
 
             logger.info(f"eid: {resp.eid}")
             logger.info(f"vin: {resp.vin}")
@@ -455,7 +517,7 @@ class DoipKeywords(object):
 
 
     @keyword("Request Alive Check")
-    def request_alive_check(self):
+    def request_alive_check(self, device_name = "default"):
         """
         **Description:**
 
@@ -463,7 +525,8 @@ class DoipKeywords(object):
 
         **Parameters:**
 
-           None
+           * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -479,8 +542,9 @@ class DoipKeywords(object):
             * Request Vehicle Identification | eid=0x123456789abc
             * Request Vehicle Identification | vin=0x123456789abc
         """
-        if self.client is not None:
-            resp = self.client.request_alive_check()
+        doip_device = self.__device_check(device_name)
+        if doip_device.client is not None:
+            resp = doip_device.client.request_alive_check()
             logger.info(f"source_address: {resp.source_address}")
         else:
             logger.warn(f"No active DoIP connection. Unable to request alive.")
@@ -491,6 +555,7 @@ class DoipKeywords(object):
         activation_type, 
         vm_specific=None,
         disable_retry=False,
+        device_name = "default"
     ):
         """
         **Description:**
@@ -508,6 +573,8 @@ class DoipKeywords(object):
             * param ``disable_retry``: Disables retry regardless of auto_reconnect_tcp flag. This is used by activation
                                         requests during connect/reconnect.
             * type ``disable_retry``: bool, optional
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
  
         **Return:**
 
@@ -523,15 +590,16 @@ class DoipKeywords(object):
             * Request Routing Activation | vm_specific=
             * Request Routing Activation | vin=0x123456789abc
         """
-        if self.client is not None:
-            resp = self.client.request_activation(self, activation_type, vm_specific, disable_retry)
+        doip_device = self.__device_check(device_name)
+        if doip_device.client is not None:
+            resp = doip_device.client.request_activation(self, activation_type, vm_specific, disable_retry)
             logger.info(f"client_logical_address: {resp.client_logical_address}")
             logger.info(f"logical_address: {resp.logical_address}")
         else:
             logger.warn(f"No active DoIP connection. Unable to request routing activation.")
 
     @keyword("Request Diagnostic Power Mode")
-    def request_diagnostic_power_mode(self):
+    def request_diagnostic_power_mode(self, device_name = "default"):
         """
         **Description:**
 
@@ -539,7 +607,8 @@ class DoipKeywords(object):
 
         **Parameters:**
 
-           None
+           * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -553,14 +622,15 @@ class DoipKeywords(object):
 
             * Request Diagnostic Power Mode
         """
-        if self.client is not None:
-            resp = self.client.request_diagnostic_power_mode()
+        doip_device = self.__device_check(device_name)
+        if doip_device.client is not None:
+            resp = doip_device.client.request_diagnostic_power_mode()
             logger.info(f"diagnostic_power_mode: {resp.diagnostic_power_mode}")
         else:
             logger.warn(f"No active DoIP connection. Unable to request diagnostic power mode.")
 
     @keyword("Build payload")
-    def build_payload(self, request):
+    def build_payload(self, request, device_name = "default"):
         """
         **Description:**
 
@@ -570,6 +640,8 @@ class DoipKeywords(object):
 
             * param ``request`` (required): hex data
             * type ``request``: hex
+            * param ``device_name`` (optional): Name of DoIP device
+            * type ``device_name``: str
 
         **Return:**
 
@@ -584,14 +656,14 @@ class DoipKeywords(object):
             * Build payload by protocol version | ${request}
             * Build payload by protocol version | hex_value
         """
-
+        doip_device = self.__device_check(device_name)
         if request is None:
             raise ValueError("The request cannot be None.")
 
         msg = bytes.fromhex(request)
-        message = messages.DiagnosticMessage(self.client._client_logical_address, self.client._ecu_logical_address, msg)
+        message = messages.DiagnosticMessage(doip_device.client._client_logical_address, doip_device.client._ecu_logical_address, msg)
         rtype = messages.payload_message_to_type[type(message)]
         rdata = message.pack()
-        data_bytes = self.client._pack_doip(self.client._protocol_version, rtype, rdata)
+        data_bytes = doip_device.client._pack_doip(doip_device.client._protocol_version, rtype, rdata)
 
         return bytes(data_bytes)

@@ -73,9 +73,10 @@ here:
 
 # Feedback
 
-To give us a feedback, you can send an email to [Thomas
-Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com) or
-[RBVH-ECM-Automation_Test_Framework-Associates](mailto:RBVH-ENG2-CMD-Associates@bcn.bosch.com)
+To give us a feedback, you can send an email to [Thomas Pollerspöck](mailto:Thomas.Pollerspoeck@de.bosch.com)
+
+In case you want to report a bug or request any interesting feature,
+please don\'t hesitate to raise a ticket.
 
 # About
 

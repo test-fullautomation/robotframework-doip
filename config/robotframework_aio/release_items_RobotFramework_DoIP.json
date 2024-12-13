@@ -1,6 +1,6 @@
 # **************************************************************************************************************
 #
-# Copyright 2020-2023 Robert Bosch GmbH
+# Copyright 2020-2024 Robert Bosch GmbH
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,19 +88,22 @@ The following keywords are available now:
                             ],
                     "0.13.1" : [
 "
-** Add the DoIP keywords to support working with multiple connections.**
 
-**Code example: multiple connection**
+**New feature: Support of multiple connections**
 
-  | ``Connect To ECU    192.168.1.1    13400    device_name=device_1``
-  | ``Send Diagnostic Message    1040    device_name=device_1``
-  | ``${res}=    Receive Diagnostic Message    device_name=device_1``
-  | ``Disconnect    device_name=device_1``
+Code example:
 
-  | ``Connect To ECU    192.168.1.3    13400    device_name=device_2``
-  | ``Send Diagnostic Message    1040    device_name=device_2``
-  | ``${res}=    Receive Diagnostic Message    device_name=device_2``
-  | ``Disconnect    device_name=device_2``
+  | ``# first connection to device_1``
+  | ``Connect To ECU\u00a0\u00a0\u00a0\u00a0192.168.1.1\u00a0\u00a0\u00a0\u00a013400\u00a0\u00a0\u00a0\u00a0device_name=device_1``
+  | ``Send Diagnostic Message\u00a0\u00a0\u00a0\u00a01040\u00a0\u00a0\u00a0\u00a0device_name=device_1``
+  | ``${res}=\u00a0\u00a0\u00a0\u00a0Receive Diagnostic Message\u00a0\u00a0\u00a0\u00a0device_name=device_1``
+  | ``Disconnect\u00a0\u00a0\u00a0\u00a0device_name=device_1``
+  | 
+  | ``# second connection to device_2``
+  | ``Connect To ECU\u00a0\u00a0\u00a0\u00a0192.168.1.3\u00a0\u00a0\u00a0\u00a013400\u00a0\u00a0\u00a0\u00a0device_name=device_2``
+  | ``Send Diagnostic Message\u00a0\u00a0\u00a0\u00a01040\u00a0\u00a0\u00a0\u00a0device_name=device_2``
+  | ``${res}=\u00a0\u00a0\u00a0\u00a0Receive Diagnostic Message\u00a0\u00a0\u00a0\u00a0device_name=device_2``
+  | ``Disconnect\u00a0\u00a0\u00a0\u00a0device_name=device_2``
 "
                             ]
                  }

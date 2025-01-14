@@ -116,15 +116,21 @@ class DoipKeywords(object):
             if isinstance(client_logical_address, str):
                 client_logical_address = int(client_logical_address)
 
+            if isinstance(ecu_ip_address, str):
+                ecu_ip_address = ecu_ip_address.strip()
+
+            if isinstance(client_ip_address, str):
+                client_ip_address = client_ip_address.strip()
+
             client = DoIPClient(
-                ecu_ip_address.strip(),
+                ecu_ip_address,
                 ecu_logical_address,
                 tcp_port=tcp_port,
                 udp_port=udp_port,
                 activation_type=activation_type,
                 protocol_version=protocol_version,
                 client_logical_address=client_logical_address,
-                client_ip_address=client_ip_address.strip(),
+                client_ip_address=client_ip_address,
                 use_secure=use_secure,
                 auto_reconnect_tcp=auto_reconnect_tcp,
             )

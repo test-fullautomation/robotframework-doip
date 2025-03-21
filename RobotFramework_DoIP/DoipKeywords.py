@@ -145,7 +145,7 @@ class DoipKeywords(object):
             raise ConnectionError(error_message)
 
     @keyword("Send Diagnostic Message")
-    def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME, device_name = "default"):
+    def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME, device_name = "default", suppress_exceptions=False):
         """
         **Description:**
 
@@ -190,7 +190,9 @@ class DoipKeywords(object):
             logger.info(f"Send diagnostic message: {diagnostic_payload}")
         except Exception as e:
             error_message = f"An error occurred while sending diagnostic message: {e}"
-            raise IOError(error_message)
+            logger.error(error_message)
+            if not suppress_exceptions:
+                raise IOError(error_message)
 
     @keyword("Receive Diagnostic Message")
     def receive_diagnostic_message(self, timeout=None, device_name = "default"):

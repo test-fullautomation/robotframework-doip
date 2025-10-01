@@ -1,7 +1,7 @@
 from robot.api.deco import keyword
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from .constants import (
+from RobotFramework_DoIP.constants import (
     A_DOIP_CTRL,
     TCP_DATA_UNSECURED,
     UDP_DISCOVERY,

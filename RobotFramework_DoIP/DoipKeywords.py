@@ -281,7 +281,7 @@ Close the **DoIP** client
 
 **Parameters:**
 
-* param ``device_name`` (optional, type: ``str``): Name of **DoIP** device
+* ``device_name`` (optional, type: ``str``): Name of **DoIP** device
 
 **Return:**
 
@@ -334,7 +334,7 @@ though this can be overridden with the ``ipv6`` parameter.
 * ``udp_port`` (optional, type: ``int``): The UDP port to listen on. Per the spec this should be ``13400``, but some VM's use a custom one.
 * ``timeout`` (optional, type: ``float``): Maximum amount of time to wait for message
 * ``ipv6`` (optional, type: ``bool``): Bool forcing IPV6 socket instead of IPV4 socket
-* ``source_interface`` (optional, defaul: ``None``, type: ``str``): Interface name (like "``eth0``") to bind to for use with IPv6.
+* ``source_interface`` (optional, default: ``None``, type: ``str``): Interface name (like "``eth0``") to bind to for use with IPv6.
   Defaults to ``None`` which will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
   which will bind to all interfaces uses ``INADDR_ANY``.
 * ``device_name`` (optional, type: ``str``): Name of DoIP device
@@ -426,7 +426,7 @@ Request that the ECU send a **DoIP** Entity Status Response
 
 **Parameters:**
 
-* param ``device_name`` (optional, type: ``str``): Name of DoIP device
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
 **Return:**
 
@@ -507,7 +507,7 @@ Request that the ECU send an alive check response.
 
 **Parameters:**
 
-* ``device_name`` (optional, type. ``str``): Name of DoIP device
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
 **Return:**
 
@@ -548,7 +548,7 @@ Requests a given activation type from the ECU for this connection using payload 
 * ``activation_type`` (required, type: ``RoutingActivationRequest.ActivationType``): The type of activation to request - see Table 47
   ("Routing activation request activation types") of ISO-13400, but should generally be 0 (default) or 1 (regulatory diagnostics).
 * ``vm_specific`` (optional, type: ``int``): 4 byte long int
-* param ``disable_retry`` (optional, type: ``bool``): Disables retry regardless of ``auto_reconnect_tcp`` flag.
+* ``disable_retry`` (optional, type: ``bool``): Disables retry regardless of ``auto_reconnect_tcp`` flag.
   This is used by activation requests during connect/reconnect.
 * ``device_name`` (optional, type: ``str``): Name of DoIP device
 

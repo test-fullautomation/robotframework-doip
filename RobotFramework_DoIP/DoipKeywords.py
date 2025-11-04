@@ -30,6 +30,12 @@ class DoipDevice(object):
         self.debug = 0
 
 class DoipKeywords(object):
+
+    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
+    ROBOT_AUTO_KEYWORDS      = False # only decorated methods are keywords
+    ROBOT_LIBRARY_VERSION    = "0.1.6" # TODO: get this from version.py
+    # ROBOT_LIBRARY_SCOPE    = to be defined
+
     def __init__(self):
         self.doip_device_manager = DoipDeviceManager()
 
@@ -56,55 +62,45 @@ class DoipKeywords(object):
         device_name = "default"
     ):
         """
-        **Description:**
+**Description:**
 
-            Establishing a DoIP connection to an (ECU) within the context of automotive communication. 
-       
-        **Parameters:**
+Establishing a **DoIP** connection to an (ECU) within the context of automotive communication.
 
-            * param ``ecu_ip_address`` (required): The IP address of the ECU to establish a connection. This should be a string representing an IPv4
-                    address like "192.168.1.1" or an IPv6 address like "2001:db8::".
-            * type ``ecu_ip_address``: str
-            * param ``ecu_logical_address`` (required): The logical address of the ECU.
-            * type ``ecu_logical_address``: any
-            * param ``tcp_port`` (optional): The TCP port used for unsecured data communication (default is **TCP_DATA_UNSECURED**).
-            * type ``tcp_port``: int
-            * param ``udp_port`` (optional): The UDP port used for ECU discovery (default is **UDP_DISCOVERY**).
-            * type ``udp_port``: int
-            * param ``activation_type`` (optional): The type of activation, which can be the default value (ActivationTypeDefault) or a specific value based on application-specific settings.
-            * type ``activation_type``: RoutingActivationRequest.ActivationType,
-            * param ``protocol_version`` (optional): The version of the protocol used for the connection (default is 0x02).
-            * type ``protocol_version``: int
-            * param ``client_logical_address`` (optional): The logical address that this DoIP client will use to identify itself. Per the spec,
-                    this should be 0x0E00 to 0x0FFF. Can typically be left as default.
-            * type ``client_logical_address``: int   
-            * param ``client_ip_address`` (optional): If specified, attempts to bind to this IP as the source for both UDP and TCP communication.
-                    Useful if you have multiple network adapters. Can be an IPv4 or IPv6 address just like `ecu_ip_address`, though
-                    the type should match.
-            * type ``client_ip_address``: str
-            * param ``use_secure`` (optional): Enables TLS. If set to True, a default SSL context is used. For more control, a preconfigured
-                    SSL context can be passed directly. Untested. Should be combined with changing tcp_port to 3496.
-            * type ``use_secure``: Union[bool,ssl.SSLContext]
-            * param ``auto_reconnect_tcp`` (optional): Attempt to automatically reconnect TCP sockets that were closed by peer
-            * type ``auto_reconnect_tcp``: bool
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
-        
-        **Return:**
+**Parameters:**
 
-            None
-        
-        **Exception:**
+* ``ecu_ip_address`` (required, type: ``str``): The IP address of the ECU to establish a connection.
+  This should be a string representing an IPv4 address like ``192.168.1.1`` or an IPv6 address like ``2001:db8::``.
+* ``ecu_logical_address`` (required, type: *any*): The logical address of the ECU.
+* ``tcp_port`` (optional, default: ``TCP_DATA_UNSECURED``, type: ``int``): The TCP port used for unsecured data communication.
+* ``udp_port`` (optional, default: ``UDP_DISCOVERY``, type: ``int``): The UDP port used for ECU discovery.
+* ``activation_type`` (optional, type: ``RoutingActivationRequest.ActivationType``): The type of activation, which can be
+  the default value (``ActivationTypeDefault``) or a specific value based on application-specific settings.
+* ``protocol_version`` (optional, default: ``0x02``, type: ``int``): The version of the protocol used for the connection.
+* ``client_logical_address`` (optional, type: ``int``): The logical address that this **DoIP** client will use to identify itself. Per the spec,
+  this should be ``0x0E00`` to ``0x0FFF``. Can typically be left as default.
+* ``client_ip_address`` (optional, type: ``str``): If specified, attempts to bind to this IP as the source for both
+  UDP and TCP communication. Useful if you have multiple network adapters. Can be an **IPv4** or **IPv6** address just like
+  ``ecu_ip_address``, though the type should match.
+* ``use_secure`` (optional, type: ``Union[bool,ssl.SSLContext]``): Enables **TLS**. If set to ``True``, a default SSL context is used. For more control, a preconfigured
+  SSL context can be passed directly. Untested. Should be combined with changing tcp_port to 3496.
+* ``auto_reconnect_tcp`` (optional, type: ``bool``): Attempt to automatically reconnect TCP sockets that were closed by peer.
+* ``device_name`` (optional, type: ``str``): Name of **DoIP** device.
 
-            raises ConnectionError: Failed to establish a DoIP connection
+**Return:**
 
-        **Usage:**
-            
-            # Explicitly specifies all establishing a connection 
-            
-            * Connect To ECU | 172.17.0.111 | 1863 |
-            * Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 |
-            * Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 | activation_type=0 |
+None
+
+**Exception:**
+
+raises ``ConnectionError: Failed to establish a DoIP connection``
+
+**Usage:**
+
+Explicitly specifies all establishing a connection
+
+* ``Connect To ECU | 172.17.0.111 | 1863 |``
+* ``Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 |``
+* ``Connect To ECU | 172.17.0.111 | 1863 | client_ip_address=172.17.0.5 | client_logical_address=1895 | activation_type=0 |``
         """
         try:
             if self.doip_device_manager.is_device_exist(device_name):
@@ -147,34 +143,31 @@ class DoipKeywords(object):
     @keyword("Send Diagnostic Message")
     def send_diagnostic_message(self, diagnostic_payload, timeout=A_PROCESSING_TIME, device_name = "default", suppress_exceptions=False):
         """
-        **Description:**
+**Description:**
 
-            Send a raw diagnostic payload (ie: UDS) to the ECU.
+Send a raw diagnostic payload (ie: **UDS**) to the ECU.
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``diagnostic_payload``: UDS payload to transmit to the ECU
-            * type ``diagnostic_payload``: string
-            * param ``timeout``: send diagnostic time out (default: A_PROCESSING_TIME)
-            * type ``timeout``: int (s)
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``diagnostic_payload`` (type: ``str``): UDS payload to transmit to the ECU
+* ``timeout`` (type: ``int`` (s)): send diagnostic time out (default: ``A_PROCESSING_TIME``)
+* ``device_name`` (optional, type: ``str``): Name of **DoIP** device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            raises ConnectionRefusedError: DoIP connection attempt failed
-            raises IOError: DoIP negative acknowledgement received
+* raises ``ConnectionRefusedError: DoIP connection attempt failed``
+* raises ``IOError: DoIP negative acknowledgement received``
 
-        **Usage:**
+**Usage:**
 
-            # Explicitly specifies all diagnostic message properties
+Explicitly specifies all diagnostic message properties
 
-            * Send Diagnostic Message | 1040 |
-            * Send Diagnostic Message | 1040 | timeout=10 |
+* ``Send Diagnostic Message | 1040 |``
+* ``Send Diagnostic Message | 1040 | timeout=10 |``
         """
         doip_device = self.__device_check(device_name)
 
@@ -197,32 +190,30 @@ class DoipKeywords(object):
     @keyword("Receive Diagnostic Message")
     def receive_diagnostic_message(self, timeout=None, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Receive a raw diagnostic payload (ie: UDS) from the ECU.
+Receive a raw diagnostic payload (ie: **UDS**) from the ECU.
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``timeout``: time waiting diagnostic message (default: None)
-            * type ``timeout``: int (s)
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``timeout`` (optional, default: ``None``, type: ``int`` (s)): time waiting diagnostic message.
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            raises ConnectionRefusedError: DoIP connection attempt failed
-            raises IOError: DoIP negative acknowledgement received
+* raises ``ConnectionRefusedError: DoIP connection attempt failed``
+* raises ``IOError: DoIP negative acknowledgement received``
 
-        **Usage:**
+**Usage:**
 
-            # Explicitly specifies all diagnostic message properties
+Explicitly specifies all diagnostic message properties
 
-            * Receive Diagnostic Message |
-            * Receive Diagnostic Message | timeout=10 |
+* ``Receive Diagnostic Message |``
+* ``Receive Diagnostic Message | timeout=10 |``
         """
         doip_device = self.__device_check(device_name)
 
@@ -244,30 +235,29 @@ class DoipKeywords(object):
     @keyword("Reconnect To Ecu")
     def reconnect_to_ecu(self, close_delay=A_PROCESSING_TIME, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Attempts to re-establish the connection. Useful after an ECU reset
+Attempts to re-establish the connection. Useful after an ECU reset
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``close_delay``: Time to wait between closing and re-opening socket (default: **A_PROCESSING_TIME**)
-            * type ``close_delay``: int (s)
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``close_delay`` (type: ``int`` (s), default: ``A_PROCESSING_TIME``): Time to wait between closing and re-opening socket.
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
-            None
+**Return:**
 
-        **Exception:**
-            
-            raises ConnectionRefusedError: DoIP connection attempt failed
+None
 
-        **Usage:**
+**Exception:**
 
-            # Explicitly specifies all diagnostic message properties 
+raises ``ConnectionRefusedError: DoIP connection attempt failed``
 
-            * Reconnect To Ecu |
-            * Reconnect To Ecu | close_delay=10 |
+**Usage:**
+
+Explicitly specifies all diagnostic message properties
+
+* ``Reconnect To Ecu |``
+* ``Reconnect To Ecu | close_delay=10 |``
         """
         doip_device = self.__device_check(device_name)
 
@@ -285,29 +275,28 @@ class DoipKeywords(object):
     @keyword("Disconnect")
     def disconnect(self, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Close the DoIP client
+Close the **DoIP** client
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``device_name`` (optional, type: ``str``): Name of **DoIP** device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            raises ConnectionRefusedError: DoIP connection attempt failed
-            raises ConnectionAbortedError: close DoIP connection aborted
+* raises ``ConnectionRefusedError: DoIP connection attempt failed``
+* raises ``ConnectionAbortedError: close DoIP connection aborted``
 
-        **Usage:**
+**Usage:**
 
-            # Explicitly specifies all diagnostic message properties
+Explicitly specifies all diagnostic message properties
 
-            * Disconnect 
+* ``Disconnect``
         """
         doip_device = self.__device_check(device_name)
 
@@ -334,43 +323,37 @@ class DoipKeywords(object):
         device_name = "default"
     ):
         """
-        **Description:**
+**Description:**
 
-            When an ECU first turns on, it's supposed to broadcast a Vehicle Announcement Message over UDP 3 times
-            to assist DoIP clients in determining ECU IP's and Logical Addresses. Will use an IPv4 socket by default,
-            though this can be overridden with the `ipv6` parameter.
+When an ECU first turns on, it's supposed to broadcast a Vehicle Announcement Message over UDP 3 times
+to assist **DoIP** clients in determining ECU IP's and Logical Addresses. Will use an IPv4 socket by default,
+though this can be overridden with the ``ipv6`` parameter.
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``udp_port``: The UDP port to listen on. Per the spec this should be 13400, but some VM's use a custom
-            * one.
-            * type ``udp_port``: int, optional
-            * param ``timeout``: Maximum amount of time to wait for message
-            * type ``timeout``: float, optional
-            * param ``ipv6``: Bool forcing IPV6 socket instead of IPV4 socket
-            * type ``ipv6``: bool, optional
-            * param ``source_interface``: Interface name (like "eth0") to bind to for use with IPv6. Defaults to None which
-                will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
-                which will bind to all interfaces uses INADDR_ANY.
-            * type ``source_interface``: str, optional
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``udp_port`` (optional, type: ``int``): The UDP port to listen on. Per the spec this should be ``13400``, but some VM's use a custom one.
+* ``timeout`` (optional, type: ``float``): Maximum amount of time to wait for message
+* ``ipv6`` (optional, type: ``bool``): Bool forcing IPV6 socket instead of IPV4 socket
+* ``source_interface`` (optional, default: ``None``, type: ``str``): Interface name (like "``eth0``") to bind to for use with IPv6.
+  Defaults to ``None`` which will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
+  which will bind to all interfaces uses ``INADDR_ANY``.
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            * return: IP Address of ECU and VehicleAnnouncementMessage object
-            * rtype: tuple
+* return: IP Address of ECU and VehicleAnnouncementMessage object
+* rtype: tuple
 
-        **Exception:**
+**Exception:**
 
-            raises TimeoutError: If vehicle announcement not received in time
+* raises ``TimeoutError: If vehicle announcement not received in time``
 
-        **Usage:**
+**Usage:**
 
-            # Explicitly specifies all diagnostic message properties
+Explicitly specifies all diagnostic message properties
 
-            * Await Vehicle Annoucement 
-            * Await Vehicle Annoucement | timeout=10
+* ``Await Vehicle Annoucement``
+* ``Await Vehicle Annoucement | timeout=10``
         """
         try:
             self.__device_check(device_name)
@@ -393,42 +376,37 @@ class DoipKeywords(object):
         doip_device = "default"
     ):
         """
-        **Description:**
+**Description:**
 
-            Sends a VehicleIdentificationRequest and awaits a VehicleIdentificationResponse from the ECU,
-            either with a specified VIN, EIN, or nothing. Equivalent to the request_vehicle_identification() method
-            but can be called without instantiation
+Sends a ``VehicleIdentificationRequest`` and awaits a ``VehicleIdentificationResponse`` from the ECU,
+either with a specified VIN, EIN, or nothing. Equivalent to the ``request_vehicle_identification()`` method
+but can be called without instantiation.
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``udp_port``: The UDP port to listen on. Per the spec this should be 13400, but some VM's use a custom
-            * one.
-            * type ``udp_port``: int, optional
-            * param ``timeout``: Maximum amount of time to wait for message
-            * type ``timeout``: float, optional
-            * param ``ipv6``: Bool forcing IPV6 socket instead of IPV4 socket
-            * type ``ipv6``: bool, optional
-            * param ``source_interface``: Interface name (like "eth0") to bind to for use with IPv6. Defaults to None which
-                will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
-                which will bind to all interfaces uses INADDR_ANY.
-            * type ``source_interface``: str, optional
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``udp_port`` (optional, type: ``int``): The UDP port to listen on. Per the spec this should be 13400,
+  but some VM's use a custom one.
+* ``timeout`` (optional, type: ``float``): Maximum amount of time to wait for message
+* ``ipv6`` (optional, type: ``bool``): Bool forcing IPV6 socket instead of IPV4 socket
+* ``source_interface`` (optional, default: ``None``, type: ``str``): Interface name (like "eth0") to bind to for use with IPv6.
+  Defaults to ``None`` which will use the default interface (which may not be the one connected to the ECU). Does nothing for IPv4,
+  which will bind to all interfaces uses ``INADDR_ANY``.
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            * return: IP Address of ECU and VehicleAnnouncementMessage object
-            * rtype: tuple
+* return: IP Address of ECU and VehicleAnnouncementMessage object
+* rtype: tuple
 
-        **Exception:**
+**Exception:**
 
-            raises TimeoutError: If vehicle announcement not received in time
+raises ``TimeoutError: If vehicle announcement not received in time``
 
-        **Usage:**
+**Usage:**
 
-            * Get Entity |
-            * Get Entity | ecu_ip_address=172.17.0.111 |
-            * Get Entity | ecu_ip_address=172.17.0.111 | protocol_version=0x02
+* ``Get Entity |``
+* ``Get Entity | ecu_ip_address=172.17.0.111 |``
+* ``Get Entity | ecu_ip_address=172.17.0.111 | protocol_version=0x02``
         """
         try:
             doip_device = self.__device_check(device_name)
@@ -442,26 +420,25 @@ class DoipKeywords(object):
     @keyword("Request Entity Status")
     def request_entity_status(self, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Request that the ECU send a DoIP Entity Status Response
+Request that the ECU send a **DoIP** Entity Status Response
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            None
+None
 
-        **Usage:**
+**Usage:**
 
-            * Request Entity Status 
+* ``Request Entity Status``
         """
         doip_device = self.__device_check(device_name)
         if doip_device.client is not None:
@@ -478,33 +455,30 @@ class DoipKeywords(object):
         device_name = "default"
     ):
         """
-        **Description:**
+**Description:**
 
-            Sends a VehicleIdentificationRequest and awaits a VehicleIdentificationResponse from the ECU, either with a specified VIN, EIN,
-            or nothing
+Sends a ``VehicleIdentificationRequest`` and awaits a ``VehicleIdentificationResponse`` from the ECU,
+either with a specified VIN, EIN, or nothing.
 
-        **Parameters:**
+**Parameters:**
 
-            :param eid: EID of the Vehicle
-            :type eid: bytes, optional
-            :param vin: VIN of the Vehicle
-            :type vin: str, optional
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``eid`` (optional, type: ``bytes``): EID of the Vehicle
+* ``vin`` (optional, type: ``str``): VIN of the Vehicle
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            None
+None
 
-        **Usage:**
+**Usage:**
 
-            * Request Vehicle Identification 
-            * Request Vehicle Identification | eid=0x123456789abc
-            * Request Vehicle Identification | vin=0x123456789abc
+* ``Request Vehicle Identification``
+* ``Request Vehicle Identification | eid=0x123456789abc``
+* ``Request Vehicle Identification | vin=0x123456789abc``
         """
         doip_device = self.__device_check(device_name)
         if doip_device.client is not None:
@@ -527,28 +501,27 @@ class DoipKeywords(object):
     @keyword("Request Alive Check")
     def request_alive_check(self, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Request that the ECU send an alive check response
+Request that the ECU send an alive check response.
 
-        **Parameters:**
+**Parameters:**
 
-           * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            None
+None
 
-        **Usage:**
+**Usage:**
 
-            * Request Vehicle Identification 
-            * Request Vehicle Identification | eid=0x123456789abc
-            * Request Vehicle Identification | vin=0x123456789abc
+* ``Request Vehicle Identification``
+* ``Request Vehicle Identification | eid=0x123456789abc``
+* ``Request Vehicle Identification | vin=0x123456789abc``
         """
         doip_device = self.__device_check(device_name)
         if doip_device.client is not None:
@@ -566,37 +539,32 @@ class DoipKeywords(object):
         device_name = "default"
     ):
         """
-        **Description:**
+**Description:**
 
-            Requests a given activation type from the ECU for this connection using payload type 0x0005
+Requests a given activation type from the ECU for this connection using payload type ``0x0005``.
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``activation_type`` (required): The type of activation to request - see Table 47 ("Routing
-                                        activation request activation types") of ISO-13400, but should generally be 0 (default)
-                                        or 1 (regulatory diagnostics)
-            * type ``activation_type``: RoutingActivationRequest.ActivationType
-            * param ``vm_specific`` (optional): 4 byte long int
-            * type ``vm_specific``: int, optional
-            * param ``disable_retry``: Disables retry regardless of auto_reconnect_tcp flag. This is used by activation
-                                        requests during connect/reconnect.
-            * type ``disable_retry``: bool, optional
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
- 
-        **Return:**
+* ``activation_type`` (required, type: ``RoutingActivationRequest.ActivationType``): The type of activation to request - see Table 47
+  ("Routing activation request activation types") of ISO-13400, but should generally be 0 (default) or 1 (regulatory diagnostics).
+* ``vm_specific`` (optional, type: ``int``): 4 byte long int
+* ``disable_retry`` (optional, type: ``bool``): Disables retry regardless of ``auto_reconnect_tcp`` flag.
+  This is used by activation requests during connect/reconnect.
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-            None
+**Return:**
 
-        **Exception:**
+None
 
-            None
+**Exception:**
 
-        **Usage:**
+None
 
-            * Request Routing Activation | ${0x02}
-            * Request Routing Activation | vm_specific=
-            * Request Routing Activation | vin=0x123456789abc
+**Usage:**
+
+* ``Request Routing Activation | ${0x02}``
+* ``Request Routing Activation | vm_specific=``
+* ``Request Routing Activation | vin=0x123456789abc``
         """
         doip_device = self.__device_check(device_name)
         if doip_device.client is not None:
@@ -609,26 +577,25 @@ class DoipKeywords(object):
     @keyword("Request Diagnostic Power Mode")
     def request_diagnostic_power_mode(self, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Request that the ECU send a Diagnostic Power Mode response
+Request that the ECU send a Diagnostic Power Mode response
 
-        **Parameters:**
+**Parameters:**
 
-           * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``device_name`` (optional, type: ``str``): Name of DoIP device
 
-        **Return:**
+**Return:**
 
-            None
+None
 
-        **Exception:**
+**Exception:**
 
-            None
+None
 
-        **Usage:**
+**Usage:**
 
-            * Request Diagnostic Power Mode
+* ``Request Diagnostic Power Mode``
         """
         doip_device = self.__device_check(device_name)
         if doip_device.client is not None:
@@ -640,29 +607,27 @@ class DoipKeywords(object):
     @keyword("Build payload")
     def build_payload(self, request, device_name = "default"):
         """
-        **Description:**
+**Description:**
 
-            Build payload
+Build payload
 
-        **Parameters:**
+**Parameters:**
 
-            * param ``request`` (required): hex data
-            * type ``request``: hex
-            * param ``device_name`` (optional): Name of DoIP device
-            * type ``device_name``: str
+* ``request`` (required, type: ``hex``): hex data
+* ``device_name`` (optional, type: ``str``): Name of **DoIP** device
 
-        **Return:**
+**Return:**
 
-            return bytes data of the request
+return bytes data of the request
 
-        **Exception:**
+**Exception:**
 
-            * raise ValueError: if request is None
+* raise ``ValueError: if request is None``
 
-        **Usage:**
+**Usage:**
 
-            * Build payload by protocol version | ${request}
-            * Build payload by protocol version | hex_value
+* ``Build payload by protocol version | ${request}``
+* ``Build payload by protocol version | hex_value``
         """
         doip_device = self.__device_check(device_name)
         if request is None:

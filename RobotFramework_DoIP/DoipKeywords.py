@@ -13,6 +13,7 @@ from RobotFramework_DoIP.constants import (
 from doipclient import DoIPClient
 from doipclient import messages
 import binascii
+from RobotFramework_DoIP.version import VERSION
 
 class DoipDeviceManager(object):
     def __init__(self):
@@ -33,7 +34,7 @@ class DoipKeywords(object):
 
     ROBOT_LIBRARY_DOC_FORMAT = 'reST'
     ROBOT_AUTO_KEYWORDS      = False # only decorated methods are keywords
-    ROBOT_LIBRARY_VERSION    = "0.1.6" # TODO: get this from version.py
+    ROBOT_LIBRARY_VERSION    = VERSION
     # ROBOT_LIBRARY_SCOPE    = to be defined
 
     def __init__(self):

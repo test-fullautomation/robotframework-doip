@@ -1,5 +1,5 @@
 *** Settings ***
-Library    RobotFramework_TestsuitesManagement    WITH NAME    testsuites
+Library    RobotFramework_TestsuitesManagement    AS    testsuites
 Library    RobotFramework_DoIP
 
 *** Variables ***

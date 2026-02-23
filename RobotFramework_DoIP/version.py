@@ -1,6 +1,6 @@
 # **************************************************************************************************************
 #
-#  Copyright 2020-2023 Robert Bosch GmbH
+#  Copyright 2020-2024 Robert Bosch GmbH
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@
 #
 # Version and date of RobotFramework_DoIP
 #
-VERSION      = "0.1.6"
-VERSION_DATE = "21.3.2025"
+VERSION      = "0.2.0"
+VERSION_DATE = "23.02.2026"
 

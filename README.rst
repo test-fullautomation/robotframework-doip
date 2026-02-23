@@ -1,4 +1,4 @@
-.. Copyright 2020-2023 Robert Bosch GmbH
+.. Copyright 2020-2026 Robert Bosch GmbH
 
 .. Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,65 +13,89 @@
    limitations under the License.
 
 Package Description
----------------------
+-------------------
 
-RobotFramework DoIP is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using the Diagnostics over Internet Protocol (DoIP).
+**RobotFramework_DoIP** is a Robot Framework library specifically designed for interacting with Electronic Control Units (ECUs) using the Diagnostics over Internet Protocol (DoIP).
 
-At its core, DoIP serves as a communication bridge between external diagnostic tools and a vehicle's ECUs. This library, RobotFrameworkDoIP, 
+At its core, DoIP serves as a communication bridge between external diagnostic tools and a vehicle's ECUs. This library, **RobotFramework_DoIP**, 
 provides a set of keywords that enable users to perform diagnostic operations and engage with ECUs, facilitating automated testing processes and interaction with vehicles through the DoIP protocol.
 
 How to install
----------------------
-1.  Installation via GitHub (recommended for developers)
+--------------
 
-    -   Clone the **RobotFramework-DoIP** in `GitHub <https://github.com/test-fullautomation/robotframework-doip>`_ repository to your machine.
+The **RobotFramework_DoIP** library can be installed in two different ways.
 
-        .. code:: 
+1. Installation via PyPi (recommended for users)
 
-            git clone https://github.com/test-fullautomation/robotframework-doip.git
+   .. code::
 
-    -   Install dependencies
+      pip install robotframework-doip
 
-        **RobotFramework-DoIP** requires some additional Python libraries.
-        Before you install the cloned repository sources you have to
-        install the dependencies manually. The names of all related
-        packages you can find in the file ``requirements.txt`` in the
-        repository root folder. Use pip to install them:
+   `RobotFramework_DoIP in PyPi <https://pypi.org/project/robotframework-doip/>`_
 
-        .. code:: 
+2. Installation via GitHub (recommended for developers)
 
-            pip install -r ./requirements.txt
-        
+   * Clone the **robotframework-doip** repository to your machine.
 
-        Additionally install **LaTeX** (recommended: TeX Live). This is
-        used to render the documentation.
+     .. code::
 
-    -   Configure dependencies
+        git clone https://github.com/test-fullautomation/robotframework-doip.git
 
-        The installation of **RobotFramework-DoIP** includes to generate
-        the documentation in PDF format. This is done by an application
-        called **GenPackageDoc**, that is part of the installation
-        dependencies (see ``requirements.txt``).
+     `RobotFramework_DoIP in GitHub <https://github.com/test-fullautomation/robotframework-doip>`_
 
-        **GenPackageDoc** uses **LaTeX** to generate the documentation
-        in PDF format. Therefore **GenPackageDoc** needs to know where
-        to find **LaTeX**. This is defined in the **GenPackageDoc**
-        configuration file
+   * Use the following command to install **RobotFramework_DoIP** (executed in repository main folder):
 
-        .. code:: 
+     .. code::
 
-            packagedoc\packagedoc_config.json
+        python -m pip install .
+
+     Or:
+
+     .. code::
+
+        python -m pip install --proxy <proxy> .
+
+     This command will also download and install all dependencies that are required to work with the source files in the current repository.
+     After the initial installation of **RobotFramework_DoIP** is done, you have the following two possibilities:
+
+     1. *Clean the previous installation*:
+
+        .. code::
+
+           python "./cleanup_installation.py"
+
+        ``cleanup_installation.py`` explicitly deletes all files and folders within the component installation folder under
+        ``site-packages`` and also deletes local build artefacts.
+
+     2. *Render the component documentation*:
+
+        .. code::
+
+           python "./genpackagedoc.py"
+
+        This would e.g. be required in case of changes in the interface of **RobotFramework_DoIP**.
+
+        The documentation is rendered by a separate application called **GenPackageDoc**, that is part
+        of the build dependencies and runtime dependencies of **RobotFramework_DoIP**.
+
+        **GenPackageDoc** needs to be configured. Details about how to do this, can be found in the
+        `README.rst <https://github.com/test-fullautomation/python-genpackagedoc/blob/develop/README.rst>`_
+        (sections *Install dependencies* and *Configure dependencies*).
+
+   * Use the following command to build **RobotFramework_DoIP** (executed in repository main folder):
+
+     .. code::
+
+        python -m build .
+
+     Or:
+
+     .. code::
+
+        python -m pip config set global.proxy <proxy>
+        python -m build .
 
 
-        Before you start the installation you have to introduce the following environment variable, that is used in ``packagedoc_config.json``:
-
-        - ``GENDOC_LATEXPATH`` : path to ``pdflatex`` executable
-
-    -   Use the following command to install **RobotFramework-DoIP**:
-
-        .. code:: 
-
-            setup.py install
 
 Package Documentation
 ---------------------
@@ -108,7 +132,7 @@ Contributors
 License
 -------
 
-Copyright 2020-2023 Robert Bosch GmbH
+Copyright 2020-2026 Robert Bosch GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
